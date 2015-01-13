@@ -394,7 +394,8 @@ CT> vt 13
         Baidu-International     Trojan.Win32.CVE-2013-0074.bBZ  3.5.1.41473     20141211
 ```
 We notice that most of the Anti-Viruses detected this file as malicious, while some even provided the exploit CVE (2013-0074).  
-If you don't have a VirusTotal public API key, you can use the command 'hashes', and manually send the hash to VirusTotal.
+* If you don't have a VirusTotal public API key, you can use the command 'hashes', and manually send the hash to VirusTotal.
+
 ***
 ###Info
 
