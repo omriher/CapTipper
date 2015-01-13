@@ -2,7 +2,7 @@
 CapTipper is a malicious HTTP traffic explorer tool  
 Written By Omri Herscovici
 
-CapTipper: http://omriher.com  
+CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html  
 Email: [omriher@gmail.com](mailto:omriher@gmail.com?Subject=CapTipper feedback)  
 Twitter: [@omriher](https://twitter.com/omriher)
 
