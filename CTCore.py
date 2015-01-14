@@ -41,8 +41,7 @@ class colors:
     END = '\033[37m'
 
 # VirusTotal PUBLIC API KEY
-APIKEY = "b3accd755dacc0a962381afe31f4e2dcac5a025f3e74c03a5f82b54cf1d9f205"
-#APIKEY = ""
+APIKEY = ""
 
 class client_struct:
     def __init__(self):
