@@ -119,9 +119,9 @@ class HttpParser(object):
                 elif httptype == HttpType.RESPONSE:
                     self.read_response(reader, message)
             except Exception:
-                import traceback
+                #import traceback
 
-                traceback.print_exc()
+                #traceback.print_exc()
                 # consume all data.
                 # reader.skipall()
                 break
@@ -227,8 +227,6 @@ class HttpParser(object):
             cnt_dis = header_dict[b'content-disposition']
             if cnt_dis.find("filename=") > 0:
                 resp_header.filename = cnt_dis.split('=')[1].rstrip()
-
-
 
         return resp_header
 
