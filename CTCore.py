@@ -15,6 +15,7 @@ import urllib
 import urllib2
 import os
 import collections
+import urlparse
 
 all_conversations = []
 objects = []
@@ -40,7 +41,8 @@ class colors:
     END = '\033[37m'
 
 # VirusTotal PUBLIC API KEY
-APIKEY = ""
+APIKEY = "b3accd755dacc0a962381afe31f4e2dcac5a025f3e74c03a5f82b54cf1d9f205"
+#APIKEY = ""
 
 class client_struct:
     def __init__(self):
@@ -168,13 +170,11 @@ def finish_conversation(self):
         all_conversations[obj_num].referer = self.referer
         all_conversations[obj_num].filename = self.filename
 
-        # This will change if we find the real name
+        # In case no filename was given from the server, split by URI
         if (all_conversations[obj_num].filename == ""):
-            all_conversations[obj_num].filename = all_conversations[obj_num].uri.split('/')[-1]
+            uri_name = urlparse.urlsplit(str(all_conversations[obj_num].uri)).path
+            all_conversations[obj_num].filename = uri_name.split('/')[-1]
 
-        # In case the URI was '/' then this is still empty
-        if (all_conversations[obj_num].filename != ""):
-            # In case URI contains arguments
             if (str(all_conversations[obj_num].filename).find('?') > 0):
                 all_conversations[obj_num].filename = \
                     all_conversations[obj_num].filename[:str(all_conversations[obj_num].filename).find('?')]
@@ -182,7 +182,9 @@ def finish_conversation(self):
             if (str(all_conversations[obj_num].filename).find('&') > 0):
                 all_conversations[obj_num].filename = \
                     all_conversations[obj_num].filename[:str(all_conversations[obj_num].filename).find('&')]
-        else:
+
+        # In case the URI was '/' then this is still empty
+        if (all_conversations[obj_num].filename == ""):
             all_conversations[obj_num].filename = str(obj_num) + ".html"
 
 
