@@ -397,7 +397,8 @@ Written By Omri Herscovici
 
 Please open an issue for bugs.  
 I would be happy to accept suggestions and feedback to my mail :)  
-CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html 
+
+CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html  
 Email: [omriher@gmail.com](mailto:omriher@gmail.com?Subject=CapTipper feedback)  
 Twitter: [@omriher](https://twitter.com/omriher)
 
