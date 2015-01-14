@@ -1,16 +1,6 @@
 ##CapTipper
-CapTipper is a malicious HTTP traffic explorer tool  
-Written By Omri Herscovici
 
-CapTipper: http://omriher.com  
-Email: [omriher@gmail.com](mailto:omriher@gmail.com?Subject=CapTipper feedback)  
-Twitter: [@omriher](https://twitter.com/omriher)
-
-[ScreenShot]: http://3.bp.blogspot.com/-7XrSKP1BHzE/VLRGBR3cQ0I/AAAAAAAAZso/3FpWTRi8rYU/s1600/CapTipperScreenShot.png
-
-![ScreenShot]
-***
-###What is CapTipper
+CapTipper: http://omriher.blogspot.co.il/2015/01/captipper-malicious-http-traffic.html  
 
 CapTipper is a python tool to analyze, explore and revive HTTP malicious traffic.  
 CapTipper sets up a web server that acts exactly as the server in the PCAP file,  
@@ -22,6 +12,10 @@ and is useful when trying to research exploits, pre-conditions, versions, obfusc
 Feeding CapTipper with a drive-by traffic capture (e.g of an exploit kit) displays the user with the requests URI's that were sent and responses meta-data.  
 The user can at this point browse to http://127.0.0.1/[URI] and receive the response back to the browser.  
 In addition, an interactive shell is launched for deeper investigation using various commands such as: hosts, hexdump, info, ungzip, body, client, dump and more...
+
+[ScreenShot]: http://3.bp.blogspot.com/-7XrSKP1BHzE/VLRGBR3cQ0I/AAAAAAAAZso/3FpWTRi8rYU/s1600/CapTipperScreenShot.png
+
+![ScreenShot]
 ***
 ###Analysis Example
 
@@ -102,25 +96,27 @@ CT> hosts
 Found Hosts:
 
  www.magmedia.com.au
- ?-- /   [0]
- ?-- /wp-includes/js/jquery/jquery.js?ver=1.7.2   [1]
- ?-- /wp-content/uploads/2014/01/MetroWest_COVER_Issue2_Feb2014.jpg   [4]
- ?-- /images/footer/3000melbourne.png   [5]
- ?-- /images/footer/3207portmelbourne.png   [6]
- ?-- /wp-content/uploads/2012/09/background1.jpg   [7]
+ ├-- /   [0]
+ ├-- /wp-includes/js/jquery/jquery.js?ver=1.7.2   [1]
+ ├-- /wp-content/uploads/2014/01/MetroWest_COVER_Issue2_Feb2014.jpg   [4]
+ ├-- /images/footer/3000melbourne.png   [5]
+ ├-- /images/footer/3207portmelbourne.png   [6]
+ └-- /wp-content/uploads/2012/09/background1.jpg   [7]
+
 
  pixeltouchstudios.tk
- ?-- /seedadmin17.html   [2]
+ └-- /seedadmin17.html   [2]
+
 
  grannityrektonaver.co.vu
- ?-- /15c0b14drr9f_1_08282d03fb0251bbd75ff6dc6e317bd9.html   [3]
- ?-- /00015d76d9b2rr9f/1415286120   [8]
- ?-- /00015d766423rr9f/1415286120   [9]
- ?-- /00015d76rr9f/1415286120/5/x00809070554515d565b010b03510053535c0505;1;6   [10]
- ?-- /00015d76rr9f/1415286120/5/x00809070554515d565b010b03510053535c0505;1;6;1   [11] 
- ?-- /00015d76rr9f/1415286120/7   [12]
- ?-- /00015d761709rr9f/1415286120   [13]
- ?-- /00015d76rr9f/1415286120/8   [14]
+ ├-- /15c0b14drr9f_1_08282d03fb0251bbd75ff6dc6e317bd9.html   [3]
+ ├-- /00015d76d9b2rr9f/1415286120   [8]
+ ├-- /00015d766423rr9f/1415286120   [9]
+ ├-- /00015d76rr9f/1415286120/5/x00809070554515d565b010b03510053535c0505;1;6   [10]
+ ├-- /00015d76rr9f/1415286120/5/x00809070554515d565b010b03510053535c0505;1;6;1   [11]
+ ├-- /00015d76rr9f/1415286120/7   [12]
+ ├-- /00015d761709rr9f/1415286120   [13]
+ └-- /00015d76rr9f/1415286120/8   [14]
 ```
 It seems that **www.magmedia.com.au** is the compromised site.
 
@@ -183,9 +179,9 @@ Let's have a quick peek at the javascript file (object 1)
 CT> body 1 
 Displaying body of object 1 (jquery.js) [256 bytes]:
 
-?     ????i{#????}~?X?t??"HJ?g???o�%Y????m?CR?
-@a!?P ??        ?o????TJ?�?\g?j??\"#c???g ?ry?~5?O6?�?V???? h|?*??�?h?6_�??�??a??.?i??????l67�???z?^�?? ??�?F????h??????zZ4???�|??g???v^,6??=h???`?\�o
-???????4?f�????h%?y{U???A?<n?_???=???_4/Z???�???????^???irq�?i
+▼     ♦♥─╜i{#╟ס╢√}~♣X╓t♥═"HJצg♀░→o½%Y▓╡ם║m┘CR║
+@a!▒P ╪כ        ╬o?≈‼╣TJ≥£≈\g╞jó╢\"#cן╚πg ÷ry≤~5↔O6םµ╦Vπ├ףף h|╛*ך╞½σh≤6_§ם╧ק╖כa╛ש.↨iπ╦┼á▌רl67¥ππ╤z╘^«╞╟ ÷∞°▀F╖כב▐hלכ═╦σ≥zZ4≤╓▌¢|╒Φg├σαv^,6φב=h╧≤═`╥\¶o
+←▀↨π╧▐▌4ףf»≤π╢█h%חy{U▄╠≥A╤<n₧_┤?Φ=█▐▌_4/Z↨τ↨ק↨↨↨╟↨ח?^╢מ╟irq±┴i
 ```
 Hmm... What's going on? Let's look at the header
 ```sh
@@ -392,11 +388,20 @@ CT> vt 13
         Baidu-International     Trojan.Win32.CVE-2013-0074.bBZ  3.5.1.41473     20141211
 ```
 We notice that most of the Anti-Viruses detected this file as malicious, while some even provided the exploit CVE (2013-0074).  
-If you don't have a VirusTotal public API key, you can use the command 'hashes', and manually send the hash to VirusTotal.
+* If you don't have a VirusTotal public API key, you can use the command 'hashes', and manually send the hash to VirusTotal.
+
 ***
 ###Info
 
+Written By Omri Herscovici
+
 Please open an issue for bugs.  
 I would be happy to accept suggestions and feedback to my mail :)  
-omriher@gmail.com 
+
+CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html  
+Email: [omriher@gmail.com](mailto:omriher@gmail.com?Subject=CapTipper feedback)  
+Twitter: [@omriher](https://twitter.com/omriher)
+
+
+
 
