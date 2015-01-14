@@ -1,16 +1,6 @@
 ##CapTipper
-CapTipper is a malicious HTTP traffic explorer tool  
-Written By Omri Herscovici
 
-CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html  
-Email: [omriher@gmail.com](mailto:omriher@gmail.com?Subject=CapTipper feedback)  
-Twitter: [@omriher](https://twitter.com/omriher)
-
-[ScreenShot]: http://3.bp.blogspot.com/-7XrSKP1BHzE/VLRGBR3cQ0I/AAAAAAAAZso/3FpWTRi8rYU/s1600/CapTipperScreenShot.png
-
-![ScreenShot]
-***
-###What is CapTipper
+CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html 
 
 CapTipper is a python tool to analyze, explore and revive HTTP malicious traffic.  
 CapTipper sets up a web server that acts exactly as the server in the PCAP file,  
@@ -22,6 +12,10 @@ and is useful when trying to research exploits, pre-conditions, versions, obfusc
 Feeding CapTipper with a drive-by traffic capture (e.g of an exploit kit) displays the user with the requests URI's that were sent and responses meta-data.  
 The user can at this point browse to http://127.0.0.1/[URI] and receive the response back to the browser.  
 In addition, an interactive shell is launched for deeper investigation using various commands such as: hosts, hexdump, info, ungzip, body, client, dump and more...
+
+[ScreenShot]: http://3.bp.blogspot.com/-7XrSKP1BHzE/VLRGBR3cQ0I/AAAAAAAAZso/3FpWTRi8rYU/s1600/CapTipperScreenShot.png
+
+![ScreenShot]
 ***
 ###Analysis Example
 
@@ -399,7 +393,14 @@ We notice that most of the Anti-Viruses detected this file as malicious, while s
 ***
 ###Info
 
+Written By Omri Herscovici
+
 Please open an issue for bugs.  
 I would be happy to accept suggestions and feedback to my mail :)  
-omriher@gmail.com 
+CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html 
+Email: [omriher@gmail.com](mailto:omriher@gmail.com?Subject=CapTipper feedback)  
+Twitter: [@omriher](https://twitter.com/omriher)
+
+
+
 
