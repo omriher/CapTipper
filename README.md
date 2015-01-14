@@ -1,6 +1,6 @@
 ##CapTipper
 
-CapTipper: http://omriher.com/2015/01/captipper-malicious-http-traffic.html 
+CapTipper: http://omriher.blogspot.co.il/2015/01/captipper-malicious-http-traffic.html  
 
 CapTipper is a python tool to analyze, explore and revive HTTP malicious traffic.  
 CapTipper sets up a web server that acts exactly as the server in the PCAP file,  
