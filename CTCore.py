@@ -21,7 +21,7 @@ all_conversations = []
 objects = []
 hosts = collections.OrderedDict()
 request_logs = []
-VERSION = "0.01"
+VERSION = "0.1"
 BUILD = "01"
 
 # WS configurations
