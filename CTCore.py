@@ -90,15 +90,7 @@ def show_hosts():
     for host in hosts.keys():
         print " " + host
         for host_uri in hosts[host]:
-            #chr_num = 195 # Extended ASCII tree symbol
-            chr_num = 9500  # UNICODE tree symbol
-
-            # Checks if last one
-            if (host_uri == hosts[host][len(hosts[host]) - 1]):
-                #chr_num = 192 # Extended ASCII tree symbol
-                chr_num = 9492 # UNICODE tree symbol
-
-            print " " + unichr(chr_num) + "-- " + host_uri.encode('utf8')
+            print " |" + "-- " + host_uri.encode('utf8')
         print newLine
 
 def check_duplicate_url(host, uri):
