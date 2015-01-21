@@ -98,7 +98,10 @@ def show_hosts():
                 #chr_num = 192 # Extended ASCII tree symbol
                 chr_num = 9492 # UNICODE tree symbol
 
-            print " " + unichr(chr_num) + "-- " + host_uri.encode('utf8')
+            try:
+                print " " + unichr(chr_num) + "-- " + host_uri.encode('utf8')
+            except:
+                print " |-- " + host_uri.encode('utf8')
         print newLine
 
 def check_duplicate_url(host, uri):
