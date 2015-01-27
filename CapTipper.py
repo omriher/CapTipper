@@ -26,7 +26,12 @@ def main(args):
 
     parse_pcap.run(file_path)
 
-    print(CTCore.newLine + "[+] Traffic Activity Time: " + CTCore.activity_date_time.strftime('%a, %x %X'))
+    print(CTCore.newLine + "[+] Traffic Activity Time: "),
+    try:
+        print(CTCore.activity_date_time.strftime('%a, %x %X'))
+    except:
+        print "Couldn't retrieve time"
+
     print("[+] Conversations Found:" + CTCore.newLine)
     CTCore.show_conversations()
 
