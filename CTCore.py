@@ -22,7 +22,11 @@ objects = []
 hosts = collections.OrderedDict()
 request_logs = []
 VERSION = "0.1"
+<<<<<<< HEAD
 BUILD = "04"
+=======
+BUILD = "03"
+>>>>>>> cfe6e09018c5c3a37b53bc637c7f3a017f44fc39
 
 # WS configurations
 web_server_turned_on = False
