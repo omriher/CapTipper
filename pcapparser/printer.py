@@ -39,7 +39,7 @@ class HttpPrinter(object):
         self.host = ""
         self.referer = ""
         self.filename = ""
-        self.res_len = ""
+        self.res_len = 0
 
 
     def on_http_req(self, req_header, req_body):

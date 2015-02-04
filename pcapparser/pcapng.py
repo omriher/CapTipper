@@ -82,7 +82,7 @@ class PcapngFile(object):
             padding_len = raw_len
             if code == 9:
                 # if_tsresol
-                if_tsresol = option[4]
+                if_tsresol = ord(option[4])
                 sig = (if_tsresol & 0x80)
                 count = if_tsresol & 0x7f
                 # we use microsecond
