@@ -186,15 +186,17 @@ def read_tcp_packet(read_packet):
     """ generator, read a *TCP* package once."""
 
     for link_type, micro_second, link_packet in read_packet():
-        link_layer_parser = get_link_layer_parser(link_type)
-        state, pack = read_tcp_pac(link_packet, link_layer_parser)
-        if state == 1 and pack:
-            pack.micro_second = micro_second
-            yield pack
-            continue
-        else:
-            continue
-
+        try:
+            link_layer_parser = get_link_layer_parser(link_type)
+            state, pack = read_tcp_pac(link_packet, link_layer_parser)
+            if state == 1 and pack:
+                pack.micro_second = micro_second
+                yield pack
+                continue
+            else:
+                continue
+        except:
+            pass
 
 def read_package_r(pcap_file):
     """
