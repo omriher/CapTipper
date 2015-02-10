@@ -22,7 +22,7 @@ objects = []
 hosts = collections.OrderedDict()
 request_logs = []
 VERSION = "0.1"
-BUILD = "05"
+BUILD = "06"
 
 
 # WS configurations

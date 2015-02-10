@@ -26,6 +26,9 @@ def main(args):
 
     parse_pcap.run(file_path)
 
+    if not CTCore.all_conversations:
+        sys.exit("No HTTP conversations were found in PCAP file")
+
     print(CTCore.newLine + "[+] Traffic Activity Time: "),
     try:
         print(CTCore.activity_date_time.strftime('%a, %x %X'))
