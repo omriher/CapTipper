@@ -1,6 +1,6 @@
 ##CapTipper v0.2
 
-CapTipper v0.2: http://www.omriher.com/2015/03/captipper-02-released.html
+CapTipper v0.2: http://www.omriher.com/2015/03/captipper-02-released.html  
 CapTipper v0.1: http://www.omriher.com/2015/01/captipper-malicious-http-traffic.html  
 
 CapTipper is a python tool to analyze, explore and revive HTTP malicious traffic.  
