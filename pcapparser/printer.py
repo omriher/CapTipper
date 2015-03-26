@@ -33,13 +33,17 @@ class HttpPrinter(object):
         self.req_head = ""
         self.res_body = ""
         self.orig_resp = ""
+        self.orig_chunked_resp = ""
         self.res_head = ""
         self.res_num = ""
         self.res_type = ""
+        self.redirect_to = ""
         self.host = ""
         self.referer = ""
         self.filename = ""
+        self.method = ""
         self.res_len = 0
+        self.time = 0
 
 
     def on_http_req(self, req_header, req_body):
@@ -59,6 +63,8 @@ class HttpPrinter(object):
             self.req_head = req_header.raw_data
             self.host = req_header.host
             self.referer = req_header.referer
+            self.method = req_header.method
+            self.time = req_header.time
 
             mime, charset = utils.parse_content_type(req_header.content_type)
             # usually charset is not set in http post
@@ -74,7 +80,7 @@ class HttpPrinter(object):
                 self._print_body(req_body, req_header.compress, mime, charset)
                 #self._println('')
 
-    def on_http_resp(self, resp_header, resp_body, orig_resp):
+    def on_http_resp(self, resp_header, resp_body, orig_chunked_resp):
         """
         :type resp_header: HttpResponseHeader
         :type resp_body: bytes
@@ -88,10 +94,11 @@ class HttpPrinter(object):
             self._println(resp_header.raw_data)
             #self._println()
             self.res_head = resp_header.raw_data
-            self.orig_resp = orig_resp
+            self.orig_chunked_resp = orig_chunked_resp
             self.res_type = resp_header.content_type
             self.res_len = resp_header.content_len
             self.res_num = resp_header.status_line[resp_header.status_line.find(' ') + 1:]
+            self.redirect_to = resp_header.redirect_to
             self.filename = resp_header.filename
 
             mime, charset = utils.parse_content_type(resp_header.content_type)
@@ -107,11 +114,12 @@ class HttpPrinter(object):
             if output_body:
                 self._print_body(resp_body, resp_header.compress, mime, charset)
                 #self._println()
-                self.res_body = resp_body
+                self.orig_resp = resp_body
+                if self.res_body == b"":
+                    self.res_body = resp_body
 
                 if (self.res_body is not None) and (len(self.res_body) > 0) and (self.res_len == 0):
                     self.res_len = len(self.res_body)
-
 
         if not config.get_config().group:
             self._do_output()
@@ -166,6 +174,10 @@ class HttpPrinter(object):
                 body = utils.ungzip(body)
             elif compress == Compress.DEFLATE:
                 body = utils.decode_deflate(body)
+
+            self.res_body = ""
+            if CTCore.b_auto_ungzip:
+                self.res_body = body
 
             content = utils.decode_body(body, charset)
             if content:

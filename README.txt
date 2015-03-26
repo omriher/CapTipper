@@ -13,6 +13,9 @@ Python 2.7.x Only
 Included Modules: 
 pcap_parser - https://github.com/xiaxiaocao/pcap-parser (Dong Liu)
 colorama - https://pypi.python.org/pypi/colorama (Jonathan Hartley)
+pescanner - https://code.google.com/p/malwarecookbook/source/browse/trunk/3/8/pescanner.py (Michael Ligh)
+pefile / peutil - https://code.google.com/p/pefile/ (Ero Carrera)
+jsbeautify - http://jsbeautifier.org/ (Einar Lielmanis)
 (Thanks to all the developers !!)
 
 
@@ -23,8 +26,11 @@ No Installation needed
 
 Execution
 -=-=-=-=-=-=-=
-Basic usage: ./CapTipper.py <pcap_file> [web_server_port=80]
+Basic usage: ./CapTipper.py <pcap_file> [-p] [web_server_port=80]
 
+License
+-=-=-=-=
+GPLv3
 
 Hints
 -=-=-=
@@ -49,18 +55,18 @@ Hints
 - dump <obj> <path>
      Dumps the file to given location
 
+- peinfo <obj> [-p]
+     Display PE info of the file
+
+- find <obj / all> <regex expression>
+    Search for a regular expression in all or specific object
+
 - More...
 > help
-
-TODO
--=-=-=-=
-- TrID
-- Regex search
-- PE info
 
 Bugs
 -=-=-=
 Please send me bugs and feedback :)
-Open Issue in GitHub or via mail omriher@gmail.com
+via mail omriher@gmail.com
 
 Thanks!

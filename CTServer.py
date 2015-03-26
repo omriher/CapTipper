@@ -6,7 +6,7 @@
 #
 #          This file is part of CapTipper
 #
-#          CapTipper is a free software under the Apache License
+#          CapTipper is a free software under the GPLv3 License
 #
 
 import SocketServer
@@ -19,8 +19,8 @@ class server(Thread):
         self.srv = SocketServer.TCPServer((CTCore.HOST, CTCore.PORT), TCPHandler)
 
     def run(self):
-        print CTCore.newLine + "[+] Started Web Server on http://" + CTCore.HOST + ":" + str(CTCore.PORT)
-        print "[+] Listening to requests..." + CTCore.newLine
+        print CTCore.newLine + CTCore.colors.GREEN + "[+]" + CTCore.colors.END + " Started Web Server on http://" + CTCore.HOST + ":" + str(CTCore.PORT)
+        print CTCore.colors.GREEN + "[+]" + CTCore.colors.END + " Listening to requests..." + CTCore.newLine
         self.srv.serve_forever()
 
     def shutdown(self):
@@ -34,6 +34,10 @@ class TCPHandler(SocketServer.BaseRequestHandler):
 
     def check_request(self, conv_req, get_uri):
         if (get_uri.lower() == conv_req.lower()):
+            return True
+        # ignore variables
+        if (get_uri.find('?') > 0 and conv_req.find('?') > 0) and \
+                (get_uri.lower()[:get_uri.find('?')] == conv_req.lower()[:conv_req.find('?')]):
             return True
         else:
             return False
@@ -64,13 +68,15 @@ class TCPHandler(SocketServer.BaseRequestHandler):
         if (self.data != ""):
             get_uri = self.get_clear_uri()
 
-            for conv in CTCore.all_conversations:
+            for conv in CTCore.conversations:
                 if (self.check_request(conv.uri, get_uri) == True):
                     resp = conv.res_head
-                    if conv.orig_resp != "":
-                        resp = resp + "\r\n\r\n" + conv.orig_resp
+                    if conv.orig_chunked_resp != "":
+                        resp = resp + "\r\n\r\n" + conv.orig_chunked_resp
                     else:
-                        resp = resp + "\r\n\r\n" + conv.res_body
+                        resp = resp + "\r\n\r\n"
+                        if conv.orig_resp:
+                            resp += conv.orig_resp
 
                     self.request.send(resp)
                     break

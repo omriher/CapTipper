@@ -30,6 +30,7 @@ class HttpRequestHeader(object):
         self.expect = b''
         self.protocol = b''
         self.raw_data = None
+        self.time = 0
 
 
 class HttpResponseHeader(object):
@@ -40,6 +41,7 @@ class HttpResponseHeader(object):
         self.transfer_encoding = b''
         self.content_encoding = b''
         self.content_type = b''
+        self.redirect_to = b''
         self.compress = Compress.IDENTITY
         self.chunked = False
         self.connection_close = False
@@ -70,7 +72,9 @@ class HttpParser(object):
         self.worker = None
         self.processor = processor
 
-    def send(self, http_type, data):
+    def send(self, http_type, data, m_time):
+        lm_time = 0
+        lm_time = m_time
         if not self.inited:
             self._init(http_type, data)
             self.inited = True
@@ -89,7 +93,8 @@ class HttpParser(object):
         # start new task
         self.cur_data_queue = Queue()
         self.cur_data_queue.put(data)
-        self.task_queue.put((self.cur_type, self.cur_data_queue))
+        queuedata = [self.cur_type, self.cur_data_queue, lm_time]
+        self.task_queue.put(queuedata)
 
     def _init(self, http_type, data):
         if not utils.is_request(data) or http_type != HttpType.REQUEST:
@@ -104,9 +109,17 @@ class HttpParser(object):
 
     def process_tasks(self, task_queue):
         message = RequestMessage()
-
+        m_time = 0
         while True:
-            httptype, data_queue = task_queue.get()
+            queuedata = task_queue.get()
+            httptype = queuedata[0]
+            data_queue = queuedata[1]
+            try:
+                m_time = queuedata[2]
+            except:
+                pass
+            #httptype, data_queue = task_queue.get()
+
             if httptype is None:
                 # finished
                 self.processor.finish()
@@ -115,7 +128,7 @@ class HttpParser(object):
             reader = DataReader(data_queue)
             try:
                 if httptype == HttpType.REQUEST:
-                    self.read_request(reader, message)
+                    self.read_request(reader, message, m_time)
                 elif httptype == HttpType.RESPONSE:
                     self.read_response(reader, message)
             except Exception:
@@ -215,6 +228,8 @@ class HttpParser(object):
         header_dict = self.read_headers(reader, lines)
         if b"content-length" in header_dict:
             resp_header.content_len = int(header_dict[b"content-length"])
+        if b"location" in header_dict:
+            resp_header.redirect_to = header_dict[b"location"]
         if b'chunked' in header_dict[b"transfer-encoding"]:
             resp_header.chunked = True
         resp_header.content_type = header_dict[b'content-type']
@@ -225,7 +240,7 @@ class HttpParser(object):
         resp_header.filename = ""
         if b"content-disposition" in header_dict:
             cnt_dis = header_dict[b'content-disposition']
-            if cnt_dis.find("filename=") > 0:
+            if cnt_dis.find("filename=") > -1:
                 resp_header.filename = cnt_dis.split('=')[1].rstrip()
 
         return resp_header
@@ -233,7 +248,7 @@ class HttpParser(object):
     def read_chunked_body(self, reader, skip=False):
         """ read chunked body """
         result = []
-        orig_resp = []
+        orig_chunked_resp = []
         # read a chunk per loop
         while True:
             # read chunk size line
@@ -258,8 +273,8 @@ class HttpParser(object):
                     if cline is None or len(cline.strip()) == 0:
                         break
                 if not skip:
-                    orig_resp.append(b'0\r\n\r\n')
-                    return b''.join(result), b''.join(orig_resp)
+                    orig_chunked_resp.append(b'0\r\n\r\n')
+                    return b''.join(result), b''.join(orig_chunked_resp)
                 else:
                     return
                     # chunk size
@@ -279,18 +294,19 @@ class HttpParser(object):
                     return
             if not skip:
                 result.append(data)
-                orig_resp.append(cline + data + b'\r\n')
+                orig_chunked_resp.append(cline + data + b'\r\n')
 
             # a CR-LF to end this chunked response
             reader.readline()
 
-    def read_request(self, reader, message):
+    def read_request(self, reader, message, m_time):
         """ read and output one http request. """
         if message.expect_header and not utils.is_request(reader.fetchline()):
             req_header = message.expect_header
             message.expect_header = None
         else:
             req_header = self.read_http_req_header(reader)
+            req_header.time = m_time
             if req_header is None:
                 # read header error, we skip all data.
                 reader.skipall()
@@ -326,7 +342,7 @@ class HttpParser(object):
                 reader.skipall()
                 return
 
-        orig_resp = ""
+        orig_chunked_resp = ""
         # read body
         if not resp_header.chunked:
             if resp_header.content_len == 0:
@@ -343,7 +359,7 @@ class HttpParser(object):
             else:
                 resp_header.content_len = 0
         else:
-            content, orig_resp = self.read_chunked_body(reader)
+            content, orig_chunked_resp = self.read_chunked_body(reader)
 
         if not message.filtered:
-            self.processor.on_http_resp(resp_header, content, orig_resp)
+            self.processor.on_http_resp(resp_header, content, orig_chunked_resp)

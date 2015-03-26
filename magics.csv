@@ -1,0 +1,45 @@
+Windows icon,00 00 01 00,ICO,
+MPEG video,00 00 01 BA,MPG,
+TrueType font,00 01 00 00 00,TTF,CMAP;GLYF;HEAD;MAXP;NAME
+Matroska stream file,1A 45 DF A3 93 42 82 88,MKV,
+GZIP archive file,1F 8B 08,GZ,
+Compressed File [LZW],1F 9D,TAR.Z,
+Compressed File [LZH],1F A0,TAR.Z,
+Portable Document Format file,25 50 44 46,PDF,
+Advanced Systems Format [Windows Media],30 26 B2 75 8E 66 CF 11,ASF|WMA|WMV,
+Tcpdump capture file,34 CD B2 A1,PCAP,
+7-Zip compressed file,37 7A BC AF 27 1C,7Z,
+Photoshop Document file,38 42 50 53 00 01,PSD,
+HyperText Markup Language,3C,HTML,html;body
+EXtensible Markup Language,3C,XML,?xml version
+Bitmap image,42 4D,BMP,
+Compressed Flash File [ZLIB],43 57 53,SWF,
+Flash Video File,46 4C 56,FLV,
+Adobe Flash file format,46 57 53,SWF,
+E-Mail Message,46 72 6F 6D,EML,
+GIF file,47 49 46 38,GIF,
+MP3 audio file,49 44 33,MP3,
+Tagged Image File Format,49 49 2A 00,TIF,
+Windows shortcut file,4C 00 00 00 01 14 02 00,LNK,
+Tagged Image File Format,4D 4D 00 2A,TIF,
+Microsoft Cabinet file,4D 53 43 46,CAB,
+Musical Instrument Digital Interface,4D 54 68 64,MID,
+Windows executable file,4D 5A,EXE,
+PK ZIP File,50 4B 03 04,ZIP,
+Silverlight Application Package,50 4B 03 04,XAP,AppManifest.xaml
+ZIP Archive File Format,50 4B 03 04 14 00 00 00,ZIP,
+Word Open XML format,50 4B 03 04 14 00 06 00,DOCX,word;DOCUMENT;APP.XMLPK
+PowerPoint Open XML format,50 4B 03 04 14 00 06 00,PPTX,SLIDES;PRESENTATION;PRESPROPS
+Excel Open XML format,50 4B 03 04 14 00 06 00,XLSX,WORKBOOK;WORKSHEETS;STYLES
+Java archive,50 4B 03 04 14 00 08 00,JAR,
+PKZIP empty archive,50 4B 05 06,ZIP,
+PKZIP spanned archive,50 4B 07 08,ZIP,
+Audio Video Interleaved,52 49 46 46,AVI,AVI LIST
+Compressed Flash File [LZMA],5A 57 53,SWF,
+Rich Text Format,7B 5C 72 74 66 31,RTF,
+Executable and Linkable Format,7F 45 4C 46,ELF,
+Portable Network Graphics,89 50 4E 47,PNG,
+Microsoft Office document,D0 CF 11 E0 A1 B1 1A E1,DOC|PPT|XLS,
+Packet capture file [winpcap],D4 C3 B2 A1,PCAP,
+Windows graphics metafile,D7 CD C6 9A,WMF,
+JPEG images,FF D8 FF,JPG,

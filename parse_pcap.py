@@ -6,7 +6,7 @@
 #
 #          This file is part of CapTipper
 #
-#          CapTipper is a free software under the Apache License
+#          CapTipper is a free software under the GPLv3 License
 #
 
 # This file belongs to pcap-parser written by Dong Liu
@@ -22,7 +22,7 @@ import signal
 
 import sys
 # check python version
-from datetime import datetime
+import time
 import CTCore
 
 major, minor, = sys.version_info[:2]
@@ -86,7 +86,7 @@ class HttpConn:
             http_type = HttpType.RESPONSE
 
         if self.status == HttpConn.STATUS_RUNNING and tcp_pac.body:
-            self.http_parser.send(http_type, tcp_pac.body)
+            self.http_parser.send(http_type, tcp_pac.body, tcp_pac.micro_second)
 
         if tcp_pac.pac_type == -1:
             # end of connection
@@ -140,7 +140,7 @@ def pcap_file(conn_dict, infile):
         # filter
         # get time
         if CTCore.activity_date_time == "":
-            CTCore.activity_date_time = datetime.fromtimestamp(int(str(tcp_pac.micro_second)[:10]))
+            CTCore.activity_date_time = time.strftime('%a, %x %X', time.gmtime(int(str(tcp_pac.micro_second)[:10])))
 
         if CTCore.client.headers["IP"] == "":
             CTCore.client.headers["IP"] = tcp_pac.source

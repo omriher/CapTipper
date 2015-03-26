@@ -1,0 +1,45 @@
+
+CapTipper 0.2 b08 (26-03-2015 - Black Hat Arsenal)
+============================
+
+ * New Features:
+
+    - Added File Type Identification (Whatype)
+    - Added JSON & HTML report
+    - Added PE information ('peinfo' command)
+    - Added JavaScript Beautify ('jsbeautify' command)
+    - Added 'find' command (all or specific object)
+    - Added 'req' command to view raw request
+    - Added 'strings' command
+    - Added 'clear' command
+    - Added 'slice' command
+    - Added 'objects' command
+    - Added 'update' command
+    - Added some colors to messages
+    - Added argparse
+    - Some command line usage changed (--port)
+    - Added auto ungzip feature
+    - Added --short-url arg option
+    - Added time to info
+    - Added request method to info
+    - Change size format to human readable
+    - Added IP:PORT next to hosts
+    - Open / Close web server on demand
+    - Changed license to GPL v3
+    - Some refactoring
+    
+ * Fixes:
+ 
+    - Fixed no size on length 0
+    - Fixed time bug
+    - Fixed bitwise operation bug in pcapng files
+    - Fixed hosts tree bug
+    - Fixed empty body error in server
+    - Fixed color issues for Mac userss
+    - Fixed some potential bugs
+
+
+CapTipper 0.1 b01 (13-01-2015)
+============================
+
+ - Initial public release

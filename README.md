@@ -1,6 +1,7 @@
-##CapTipper
+##CapTipper v0.2
 
-CapTipper: http://www.omriher.com/2015/01/captipper-malicious-http-traffic.html  
+CapTipper v0.2: http://www.omriher.com/2015/03/captipper-02-released.html
+CapTipper v0.1: http://www.omriher.com/2015/01/captipper-malicious-http-traffic.html  
 
 CapTipper is a python tool to analyze, explore and revive HTTP malicious traffic.  
 CapTipper sets up a web server that acts exactly as the server in the PCAP file,  
@@ -20,7 +21,7 @@ In addition, an interactive shell is launched for deeper investigation using var
 ###Analysis Example
 
 ```sh
-Usage: ./CapTipper.py <PCAP_file> [web_server_port=80]
+Usage: ./CapTipper.py <PCAP_file> [-p] [web_server_port=80]
 ```
 Let's analyze the following Nuclear EK drive-by infection PCAP [2014-11-06-Nuclear-EK-traffic.pcap](http://www.malware-traffic-analysis.net/2014/11/06/2014-11-06-Nuclear-EK-traffic.pcap)
 ```sh

@@ -198,6 +198,7 @@ def read_tcp_packet(read_packet):
         except:
             pass
 
+
 def read_package_r(pcap_file):
     """
     clean up tcp packages.
