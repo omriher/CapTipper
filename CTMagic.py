@@ -180,11 +180,11 @@ class Whatype(object):
             file_content = open(filepath).read()
             return self.find(file_content, self.Tree)
         except Exception, e:
-            raise WhatypeErr("file identification", e.message)
+            raise WhatypeErr("file identification", str(e))
 
 
     def identify_buffer(self,file_content):
         try:
             return self.find(file_content, self.Tree,0,[])
         except Exception, e:
-            raise WhatypeErr("buffer identification", e.message)
+            raise WhatypeErr("buffer identification", str(e))

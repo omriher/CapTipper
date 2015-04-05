@@ -33,7 +33,7 @@ hosts = collections.OrderedDict()
 request_logs = []
 pcap_file = ""
 VERSION = "0.2"
-BUILD = "08"
+BUILD = "09"
 ABOUT = "CapTipper v" + VERSION + " b" + BUILD + " - Malicious HTTP traffic explorer tool" + newLine + \
         "Copyright 2015 Omri Herscovici <omriher@gmail.com>" + newLine
 
