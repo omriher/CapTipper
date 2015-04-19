@@ -562,8 +562,11 @@ def ungzip(id):
 
 def dump_all_files(path, dump_exe):
     for i in range(0,len(objects)):
-        if (not objects[i].name.lower().endswith(".exe")) or dump_exe:
-            dump_file(i, os.path.join(path, str(i) + "-" + objects[i].name))
+        try:
+            if (not objects[i].name.lower().endswith(".exe")) or dump_exe:
+                dump_file(i, os.path.join(path, str(i) + "-" + objects[i].name))
+        except Exception, ef:
+            print str(ef)
 
 def dump_file(id, path):
     id = int(id)
