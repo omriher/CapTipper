@@ -30,7 +30,7 @@ class HttpPrinter(object):
         self.client_host = client_host
         self.remote_host = remote_host
         self.uri = ""
-        self.req_head = ""
+        self.req = ""
         self.res_body = ""
         self.orig_resp = ""
         self.orig_chunked_resp = ""
@@ -60,7 +60,7 @@ class HttpPrinter(object):
             self._println(req_header.raw_data)
             #self._println()
             self.uri = req_header.uri
-            self.req_head = req_header.raw_data
+            self.req = req_header.raw_data
             self.host = req_header.host
             self.referer = req_header.referer
             self.method = req_header.method

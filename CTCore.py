@@ -214,7 +214,7 @@ def finish_conversation(self):
 
         obj_num = len(conversations)
         conversations.append(namedtuple('Conv',
-            ['id','server_ip', 'uri','req','res_body','res_head','res_num','res_type','host','referer', \
+            ['id','server_ip_port', 'uri','req','res_body','res_head','res_num','res_type','host','referer', \
             'filename','method','redirect_to','req_microsec', 'res_len','magic_name', 'magic_ext']))
 
         host_tuple = (self.host, str(self.remote_host[0]) + ":" + str(self.remote_host[1]))
@@ -226,7 +226,7 @@ def finish_conversation(self):
 
         # convs list
         conversations[obj_num].id = obj_num
-        conversations[obj_num].server_ip = str(self.remote_host[0]) + ":" + str(self.remote_host[1])
+        conversations[obj_num].server_ip_port = str(self.remote_host[0]) + ":" + str(self.remote_host[1])
         conversations[obj_num].uri = self.uri
         conversations[obj_num].redirect_to = self.redirect_to
         conversations[obj_num].short_uri = getShortURI(self.uri)

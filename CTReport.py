@@ -45,7 +45,7 @@ class Report(object):
             host_obj["uris"] = []
 
             for conv in self.conversations:
-                if conv.host == host and conv.server_ip == ip:
+                if conv.host == host and conv.server_ip_port == ip:
                     conv_obj = OrderedDict()
                     if (conv.magic_ext.lower() == "binary") or ((conv.res_type.lower().find("application") > -1) and (conv.res_type.lower().find("javascript") == -1)):
                         conv_obj["binary"] = 1
@@ -62,7 +62,7 @@ class Report(object):
                             conv_obj["peinfo"] = e.message
 
                     conv_obj["id"] = conv.id
-                    conv_obj["server_ip"] = conv.server_ip
+                    conv_obj["server_ip_port"] = conv.server_ip_port
                     conv_obj["uri"] = conv.uri
                     conv_obj["short_uri"] = conv.short_uri
                     conv_obj["req"] = conv.req
