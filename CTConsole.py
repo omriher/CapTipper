@@ -317,7 +317,7 @@ class console(cmd.Cmd, object):
 
                     print "Info of conversation {}: ".format(str(id))
                     print newLine + \
-                          " SERVER IP   : " + conv_obj.server_ip
+                          " SERVER IP   : " + conv_obj.server_ip_port
                     print " TIME        : " + time.strftime('%a, %x %X', time.gmtime(int(conv_obj.req_microsec)))
                     print " HOST        : " + conv_obj.host
                     print " URI         : " + conv_obj.uri

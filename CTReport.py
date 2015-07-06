@@ -65,7 +65,7 @@ class Report(object):
                     conv_obj["server_ip"] = conv.server_ip
                     conv_obj["uri"] = conv.uri
                     conv_obj["short_uri"] = conv.short_uri
-                    conv_obj["req_head"] = conv.req_head
+                    conv_obj["req"] = conv.req
                     conv_obj["res_body"] = conv.res_body
                     conv_obj["res_base64"] = ""
                     if conv.res_body is not None:

@@ -214,7 +214,7 @@ def finish_conversation(self):
 
         obj_num = len(conversations)
         conversations.append(namedtuple('Conv',
-            ['id','server_ip', 'uri','req_head','res_body','res_head','res_num','res_type','host','referer', \
+            ['id','server_ip', 'uri','req','res_body','res_head','res_num','res_type','host','referer', \
             'filename','method','redirect_to','req_microsec', 'res_len','magic_name', 'magic_ext']))
 
         host_tuple = (self.host, str(self.remote_host[0]) + ":" + str(self.remote_host[1]))
@@ -230,7 +230,7 @@ def finish_conversation(self):
         conversations[obj_num].uri = self.uri
         conversations[obj_num].redirect_to = self.redirect_to
         conversations[obj_num].short_uri = getShortURI(self.uri)
-        conversations[obj_num].req_head = self.req_head
+        conversations[obj_num].req = self.req
         conversations[obj_num].res_body = self.res_body
         add_object("body", self.res_body)
 
@@ -482,7 +482,7 @@ def get_request_size(id, size, full_request=False):
     if int(id) >= len(objects) or int(id) < 0:
         raise Exception("   ID number " + str(id) + " isn't within range")
 
-    request = conversations[int(id)].req_head
+    request = conversations[int(id)].req
     if (size.lower() == "all"):
         size = len(request)
     else:
