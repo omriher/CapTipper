@@ -20,7 +20,7 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   Console
+   Usage
    Core
    Plugins
    Webserver
