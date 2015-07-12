@@ -14,6 +14,8 @@ import cmd
 import os
 import time
 import hashlib
+import readline
+import sys
 
 import CTCore
 from CTCore import hexdump
@@ -142,6 +144,12 @@ class console(cmd.Cmd, object):
         if line == 'EOF':
             return 'exit'
         else:
+            try:
+                if CTCore.console_output:
+                    self.output_log.write(line)
+            except Exception, e:
+                print e
+
             return line
 
     def postloop(self):
@@ -168,12 +176,12 @@ class console(cmd.Cmd, object):
 
     def help_body(self):
         print newLine + "Displays the text representation of the body"
-        print newLine + "Ufsage: body <conv_id> [size=" + str(DEFAULT_BODY_SIZE) + "]"
+        print newLine + "Usage: body <conv_id> [size=" + str(DEFAULT_BODY_SIZE) + "]"
 
     def do_open(self, line):
         try:
             l = line.split(" ")
-            if (l[0] == ""):
+            if l[0] == "":
                 self.help_open()
             else:
                 bOpen = False
@@ -260,7 +268,7 @@ class console(cmd.Cmd, object):
 
     def help_hexdump(self):
         print "Display hexdump of given object"
-        print newLine + "Usage: hexdump <conv_id>" + newLine
+        print newLine + "Usage: hexdump <conv_id> [size=" + str(DEFAULT_BODY_SIZE) + "]"
 
     def do_head(self,line):
         try:
@@ -360,7 +368,7 @@ class console(cmd.Cmd, object):
                 else:
                     id = int(l[0])
                     if in_range(id):
-                        obj_num, name = CTCore.ungzip(id)
+                        obj_num, name = CTCore.ungzip_and_add(id)
                         if obj_num != -1:
                             print " GZIP Decompression of object {} ({}) successful!".format(str(id), name)
                             print " New object created: {}".format(obj_num) + newLine
@@ -415,10 +423,10 @@ class console(cmd.Cmd, object):
                 response, size = CTCore.get_response_and_size(id, "all")
                 name = CTCore.get_name(id)
 
-                parser = CTCore.CapTipperHTMLParser("iframe")
+                parser = CTCore.srcHTMLParser("iframe")
                 print "Searching for iframes in object {} ({})...".format(str(id),name)
                 parser.feed(response)
-                parser.print_iframes()
+                parser.print_objects()
                 print ""
         except Exception,e:
             print str(e)
@@ -719,6 +727,82 @@ class console(cmd.Cmd, object):
         print newLine + "Display strings found in object"
         print "usage: strings <obj_id>"
 
+    # Short for plugin
+    def do_p(self,line):
+        self.do_plugin(line)
+
+    def help_p(self):
+        self.help_plugin()
+
+    def do_plugin(self, line):
+        try:
+            l = line.split(" ")
+            if (l[0] == ""):
+                self.help_plugin()
+            elif (l[0] == "-l"):
+                print "Loaded Plugins ({}):".format(len(CTCore.plugins))
+                for plug in CTCore.plugins:
+                    print " {} : {} - {}".format(plug.id, plug.name, plug.description)
+                print ""
+            else:
+                if (l[0].isdigit() and int(l[0]) < len(CTCore.plugins)):
+                    plugin_name = CTCore.plugins[int(l[0])].name
+                else:
+                    plugin_name = l[0]
+                plugin_args = l[1:]
+                result = CTCore.run_plugin(plugin_name, plugin_args)
+                if result is not None:
+                    print result
+        except Exception,e:
+            print str(e)
+
+    def complete_plugin(self, text, line, begidx, endidx):
+        if not text:
+            completions = CTCore.plugins.keys()[:]
+        else:
+            completions = [ f
+                            for f in CTCore.plugins.keys()
+                            if f.startswith(text)
+                            ]
+        return completions
+
+    def help_plugin(self):
+        print "Launching an external plugin (Alias: p)" + newLine
+        print "usage: plugin <plugin_name / plugin_id> [-l] <*args>"
+        print "     -l      - List all available plugins" + newLine
+        print "examples:"
+        print "     plugin find_scripts"
+        print "     plugin 1"
+        print "     p find_scripts"
+
+
+    def do_output(self, line):
+        try:
+            l = line.split(" ")
+            if (l[0] == ""):
+                self.help_output()
+            elif (l[0] == "stop"):
+                if CTCore.console_output:
+                    CTCore.console_output = False
+                    self.output_log.close()
+                    print "Stopped logging to {}".format(self.output_log.log_path)
+                else:
+                    print "Not logging"
+            else:
+                if CTCore.console_output:
+                    print "Already logging to {}".format(self.output_log.log_path)
+                    return
+                path = l[0]
+                self.output_log = output_logger()
+                open_res = self.output_log.start(path)
+                if open_res == True:
+                    print "Logging to {}".format(self.output_log.log_path)
+                    CTCore.console_output = True
+                else:
+                    print "Couldn't open logfile at {} : {}".format(path, open_res)
+        except Exception, e:
+            print str(e)
+
     def help_update(self):
         print newLine + "Update CapTipper to the newest version"
         print "usage: update"
@@ -738,3 +822,57 @@ class console(cmd.Cmd, object):
     def help_exit(self):
         print 'Exits from the console'
         print 'Usage: exit'
+
+class output_logger:
+
+    def start(self, path):
+        try:
+            if os.path.exists(path):
+                pass
+            elif os.access(os.path.dirname(path), os.W_OK):
+                pass
+                #the file does not exists but write privileges are given
+            else:
+                return "Open Error"
+            self.log_path = path
+            self.stdout_saved = sys.stdout
+            self.logfile = open(path,"w") # check exception on that one.
+            sys.stdout = OutputSplitter(self.stdout_saved, self.logfile)
+        except Exception, e:
+            return str(e)
+
+        return True
+
+    def close(self):
+        sys.stdout = self.stdout_saved
+        self.logfile.close()
+
+    def write(self, data):
+        self.logfile.write(data + CTCore.newLine)
+
+class OutputSplitter(object):
+    def __init__(self, real_output, *open_files):
+        self.__stdout = real_output
+        self.__fds = open_files
+        self.encoding = real_output.encoding
+    def write(self, string):
+        self.__stdout.write(string)
+        self.__stdout.flush()
+        for fd in self.__fds:
+            try:
+                for color in CTCore.colors.__dict__.keys():
+                    col = getattr(CTCore.colors, color)
+                    try:
+                        if string.find(col) > -1:
+                            string = string.replace(col, "")
+                    except:
+                        pass
+                fd.write(string.encode('UTF-8'))
+                fd.flush()
+            except IOError:
+                pass
+            except:
+                pass
+    def flush(self):
+        pass
+

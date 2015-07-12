@@ -2,25 +2,22 @@
 Plugins
 =======
 
-CapTipper supports external plugins for easy use through the CapTipper
-console.
+CapTipper is also a framework who supports plugins as extensions for the console.
+If you have an idea for a plugin, you should implement it and send it to me or make a PULL request to the GitHub repository.
 
 Getting Started
 ===============
 
-All plugin modules must be placed inside the directory plugins/ The
-modules are loaded by CapTipper dynamically when launched. The
+All plugin modules must be placed inside the ``plugins/`` directory.
+The modules are loaded by CapTipper dynamically when launched.
 
-Plugins are python modules who implements the ConsolePlugin interface. A
-CapTipper plugin must import the ConsolePlugin class and inherint it.
+All Plugins are python modules who implements the ``ConsolePlugin`` interface. A
+CapTipper plugin must import the ``ConsolePlugin`` class from ``CTPlugin`` and inherent it.
 
-The run() function is the EntryPoint CapTipper will use to launch the
-plugin. Also, The class implementing the ConsolePlugin must have the
-same name as the py file.
+The ``run()`` function is the entry point CapTipper will use to launch the plugin.
+The class implementing the ``ConsolePlugin`` must have the same name as the ``.py`` file.
 
-Basic example:
-
-my\_first\_plugin.py
+Basic example (``my_first_plugin.py``):
 
 .. code-block:: python
 
@@ -34,18 +31,21 @@ my\_first\_plugin.py
         def run(self, args):
             print "Hello World"
 
-The plugin result can be printed through the plugin using "print", or
-returned from the RUN function; if run() result is different than None,
-the information will be printed to the screen.
+The plugin result can be printed by the plugin using "print", or returned from the Run function.
+In case result returned from ``run()`` is different than ``None``, the information will be printed out.
 
 Global Structurs
 ================
 
-CapTipper hold 3 main Data Structures conainting all information. 1.
-Conversations 2. Objects 3. Hosts
+CapTipper hold 3 main data structures containing all information:
+
+1. Conversations
+2. Objects
+3. Hosts
+
+- See #Core for more information regarding the data sets.
 
 All of which, are accessible from the plugin class using
-
 
 .. code-block:: python
 
@@ -56,16 +56,16 @@ All of which, are accessible from the plugin class using
 Internal Functions
 ==================
 
-The ConsolePlugin interface contains some function for more convient
-use: get\_name\_by\_id - Returns response object name (e.g "index.html")
-of a given conversation id get\_body\_by\_id - Returns the raw response
-body of a given convesation get\_plaintext\_body\_by\_id - Returns
-plaintext response body (e.g ungzipped in case needed) is\_valid\_id -
-Checks if id sent to the plugin is a valid one
+The ``ConsolePlugin`` interface contains important function that should be used when accessing relevant information:
 
-It is easy to import other function from the CapTipper Core.
+* ``get_name_by_id(obj_id)`` - Returns response object name (e.g "index.html") of a given conversation id
+* ``get_body_by_id(obj_id)`` - Returns the raw response body of a given convesation
+* ``get_plaintext_body_by_id(obj_id)`` - Returns plaintext response body (e.g ungzipped in case needed)
+* ``is_valid_id(obj_id)`` - Checks if id sent to the plugin is a valid one
 
-For example:
+It is also easy to import other function from the CapTipper Core.
+
+Let's take a look at an example of importing the ``ungzip`` function from ``CTCore``:
 
 .. code-block:: python
 
@@ -87,15 +87,15 @@ For example:
             else:
                 print "invalid id"
 
-You can also see here the use of the conversations internal variable
-"magic\_ext" Best practice for ungzip would be to use the
-get\_plaintext\_body\_by\_id() Function.
+You can also see here the use of the conversation internal variable ``magic_ext``.
+
+It is important to mention that the best practice for getting the conversation body is using the
+``get_plaintext_body_by_id()`` function which will also ungzip the data if necessary.
 
 Example #1
 ==========
 
-The following plugin imports the srcHTMLParser from CTCore, and searches
-external javascript referenced in a given conversation
+The following plugin imports the srcHTMLParser from CTCore, and searches external javascript referenced in a given conversation
 
 .. code-block:: python
 
@@ -111,7 +111,11 @@ external javascript referenced in a given conversation
             if len(args) > 0:
                 # Get the conversation ID
                 id = int(args[0])
+
+                # Checks if id is value
                 if self.is_valid_id(id):
+
+                    # Gets conversation name
                     name = self.get_name_by_id(id)
                     print "[.] Searching for external scripts in object {} ({})...".format(str(id),name)
 
@@ -121,6 +125,8 @@ external javascript referenced in a given conversation
                     # Create Parser instance and search for <script src="...
                     parser = srcHTMLParser("script")
                     parser.feed(response_body)
+
+                    # Prints results
                     parser.print_objects()
                 else:
                     print "Invalid conversation ID {}".format(str(id))
@@ -130,8 +136,7 @@ external javascript referenced in a given conversation
 Example #2
 ==========
 
-The following plugin checks if the host involved in a given conversation
-is still connectable using the stored IP and Port
+The following plugin checks if the host involved in a given conversation is still alive using a socket object and the conversations stored IP and Port.
 
 .. code-block:: python
 
