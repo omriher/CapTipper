@@ -9,15 +9,14 @@ Getting Started
 ===============
 
 All plugin modules must be placed inside the ``plugins/`` directory.
-The modules are loaded by CapTipper dynamically when launched.
+The modules are loaded by CapTipper automatically when launched.
 
-All Plugins are python modules who implements the ``ConsolePlugin`` interface. A
-CapTipper plugin must import the ``ConsolePlugin`` class from ``CTPlugin`` and inherent it.
-
-The ``run()`` function is the entry point CapTipper will use to launch the plugin.
+A CapTipper plugin must import the ``ConsolePlugin`` interface from ``CTPlugin``, inherent and implement it.
 The class implementing the ``ConsolePlugin`` must have the same name as the ``.py`` file.
 
-Basic example (``my_first_plugin.py``):
+The ``run(self, args)`` function is the entry point CapTipper will use to launch the plugin.
+
+Hello World example (``my_first_plugin.py``):
 
 .. code-block:: python
 
@@ -31,8 +30,7 @@ Basic example (``my_first_plugin.py``):
         def run(self, args):
             print "Hello World"
 
-The plugin result can be printed by the plugin using "print", or returned from the Run function.
-In case result returned from ``run()`` is different than ``None``, the information will be printed out.
+The plugin result can be printed out using the command ``print``, or returned from the ``run`` function.
 
 Global Structurs
 ================
@@ -43,9 +41,9 @@ CapTipper hold 3 main data structures containing all information:
 2. Objects
 3. Hosts
 
-- See #Core for more information regarding the data sets.
+- See :doc:`Core` chapter for more information about the data sets.
 
-All of which, are accessible from the plugin class using
+All of which, are accessible from the plugin class using:
 
 .. code-block:: python
 
@@ -65,7 +63,7 @@ The ``ConsolePlugin`` interface contains important function that should be used 
 
 It is also easy to import other function from the CapTipper Core.
 
-Let's take a look at an example of importing the ``ungzip`` function from ``CTCore``:
+Let's take a look at an example importing the ``ungzip`` function from ``CTCore``:
 
 .. code-block:: python
 
@@ -87,9 +85,9 @@ Let's take a look at an example of importing the ``ungzip`` function from ``CTCo
             else:
                 print "invalid id"
 
-You can also see here the use of the conversation internal variable ``magic_ext``.
+You can also see the use of the conversation internal variable ``magic_ext``.
 
-It is important to mention that the best practice for getting the conversation body is using the
+The best practice for getting the conversation body is by using the
 ``get_plaintext_body_by_id()`` function which will also ungzip the data if necessary.
 
 Example #1
@@ -136,7 +134,7 @@ The following plugin imports the srcHTMLParser from CTCore, and searches externa
 Example #2
 ==========
 
-The following plugin checks if the host involved in a given conversation is still alive using a socket object and the conversations stored IP and Port.
+The following plugin checks if the host involved in a given conversation is still alive, using a socket object and the conversations stored IP and Port.
 
 .. code-block:: python
 
