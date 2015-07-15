@@ -93,12 +93,12 @@ it is saved under the key ``client``:
 
 HTML report
 -----------
-Every HTML report is based on the ``CapTipperTemplate.html`` that can be found in the ``jsontemplate\`` directory.
+Every HTML report is based on the ``CapTipperTemplate.html`` stored in the ``jsontemplate\`` directory.
 In order to be able to display the report while offline - the HTML stores the content of ``bootstrap.js``, ``jquery.js``, ``bootstrap.css`` and part of ``d3.js``.
 
 The browsing flow graph is created using the *d3* library and displayed from left to right.
 
-The HTML report is a basic ``bootstrap`` page containing all 4 information blocks from the JSON file.
+The HTML report is a ``bootstrap`` based page containing all 4 information blocks from the JSON file.
 
 The page shows all the conversations in each domain, where suspicious URIs colored Yellow, and Executables colored Red.
 

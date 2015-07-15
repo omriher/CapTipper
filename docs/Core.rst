@@ -3,8 +3,8 @@ Core
 ====
 
 CapTipper is using a modified version of the pcap_parser library in order to parse the PCAP file.
-
-There are three main datasets handled in CapTippers core:
+The core class implements most of the functions executed by the console and is in charge of creating and storing all of the PCAP information.
+There are three main datasets handled by CapTippers core:
 
 * Conversations
 * Objects
@@ -12,9 +12,9 @@ There are three main datasets handled in CapTippers core:
 
 Conversations
 ===============
-At first, the parsing populates a data structure called ``CTCore.Conversations``.
+As part of the PCAP parsing process, a data structure ``CTCore.Conversations`` is being populated.
 A 'Conversation' is defined as Request and a Response.
-Conversations is a list of named tuples, each named tuple consists of the following values:
+Conversations is a list of named tuples, each tuple consists of the following values:
 
 * id - Conversation ID
 * server_ip_port - Server ip and port in the form of IP:PORT
@@ -25,21 +25,21 @@ Conversations is a list of named tuples, each named tuple consists of the follow
 * res_num - HTTP response number (e.g "200 OK")
 * res_type - HTTP response type (e.g "application/octet-stream")
 * host - Server Host name
-* referer - Referer URL
+* referer - Request referrer URL
 * filename - Response object name (e.g "cat.jpg")
 * method - Rquest method (GET/POST/etc..)
 * redirect_to - The URL will be redirected to in case the ``location`` response header exists
 * req_microsec - Request microsec time
 * res_len - Response size
-* magic_name - Filetype as identified by Whatype (e.g "Windows executable file")
-* magic_ext - Filetype extension as identified by Whatype (e.g "EXE")
+* magic_name - File type as identified by Whatype (e.g "Windows executable file")
+* magic_ext - File type extension as identified by Whatype (e.g "EXE")
 
 A conversation is added to the list during the parsing process upon parsing the response packet.
 
 The function responsible for adding the conversation is ``finish_conversations(self)`` in CTCore.py.
-as part of the function, a reference to the Whatype library (Read more) is called.
+As part of the function, a reference to the :doc:`Whatype` library is called for file type identification.
 
-The file name set for each conversation is created with this priority:
+The file name set for each conversation is created by this order:
 
  1. Filename given to the object from the server with "Content Disposition: filename=<file>"
  2. The final part of the URI (ignoring arguments)

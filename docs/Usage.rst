@@ -2,7 +2,11 @@
 Usage
 =======
 
-CapTipper is written in Python and it requires Python 2.7 to function properly.
+Feeding CapTipper with a drive-by traffic capture (e.g of an exploit kit) displays the user with the requests URI's that were sent and responses meta-data.
+The user can at this point browse to http://127.0.0.1/[URI] and receive the response back to the browser.
+In addition, an interactive shell is launched for deeper investigation using various commands such as: hosts, hexdump, info, ungzip, body, client, dump and more...
+
+CapTipper is written in Python and requires Python 2.7 to function properly.
 CapTipper was tested on Windows, Linux & Mac and doesn't require any installation; every prerequisites it might need is bundled into its project folder.
 
 Basic Usage:
@@ -25,7 +29,7 @@ CapTipper accepts command line arguments:
 -g, --ungzip                Automatically ungzip responses
 -u, --update                Update CapTipper to newest version
 
-``--ungzip`` Automatically ungzip all objects but web-server still responds with the original response.
+- ``--ungzip`` Automatically ungzip all objects but web-server still responds with the original response.
 
 Console
 =======
@@ -43,7 +47,7 @@ The Initialization of CapTipper outputs the conversations found between the clie
     2) Derived from the URI
     3) Assigned by CapTipper if couldn't find any of the above
 * SIZE IN BYTES: Response body size
-* MAGIC: The file format as identified by the Whatype library
+* MAGIC: The file format as identified by the :doc:`Whatype` library
 
 After Initialization, 2 things occur:
 
@@ -51,15 +55,15 @@ After Initialization, 2 things occur:
     2. An Interpreter is launched
 
 The interpreter contains internal tools for further investigation of the objects in the PCAP file.
-Opening a URI in the browser is simply by typing ``open`` along with the object id
 
-For more information on the WebServer please see
+Opening a URI in the browser is simply by typing ``open`` along with the object id.
+For more information on the web server, please see the :doc:`Webserver` chapter.
 
 Following are details for all the currently available commands.
 
 open
 ----
-CapTipper launches a local webserver imitating the web servers in the PCAP.
+CapTipper launches a local :doc:`Webserver` imitating the web server(s) in the PCAP.
 The ``open`` command gets a given conversation and launches the default browser to go to that URL on the local webserver.
 
 Example:
@@ -70,7 +74,7 @@ Example:
 
 log
 ----
-Every request to the local webserver is logged and can be viewed using ``log`` command:
+Every request to the local webserver is logged and can be viewed using the ``log`` command:
 
 ::
 
@@ -80,7 +84,7 @@ Every request to the local webserver is logged and can be viewed using ``log`` c
 convs
 -----
 
-``convs`` will display all conversation in the form they were displayed when CapTipper was launched.
+``convs`` will display all conversations in the form they were displayed when CapTipper was launched.
 
 ::
 
@@ -171,8 +175,7 @@ For example:
 
 body
 ----
-body gets the conversation id as an argument and outputs the responses
-body. Following is its help message:
+body gets the conversation id as an argument and outputs the response body. Following is its help message:
 
 ::
 
@@ -182,7 +185,7 @@ body. Following is its help message:
 
 
 
-By default, ``body`` displays the first 256 bytes of the object by it can accept a second argument which indicates the amount of bytes of the response body to display.
+By default, ``body`` displays the first 256 bytes of the object, but it can accept a second argument which indicates the amount of bytes of the response body to display.
 it can also accept ``all`` as the second argument, which will return the entire body.
 
 For example:
@@ -213,7 +216,7 @@ Many times using the ``body`` command will result in an un-readable response due
 
 
 ``ungzip`` gets a conversation id as an argument and creates a new object
-with the ungzipped form of the object
+with the ungzipped data of the object
 
 ::
 
@@ -272,7 +275,7 @@ For example:
 hexdump
 --------
 The ``hexdump`` command displays the hexdump of a given conversation object. like the ``body`` command,
-it display the first 256 bytes of the objects but this can be changed by providing a second argument.
+it display the first 256 bytes of the objects but this can be changed by providing the second ``size`` argument.
 
 Its help message:
 ::
@@ -308,7 +311,7 @@ For example:
 
 peinfo
 ------
-The ``peinfo`` displays interesting and suspicious information regarding a binary file based on the Malware Cookbook PE scanner.
+The ``peinfo`` displays interesting and suspicious information regarding a binary file, based on the Malware Cookbook PE scanner.
 
 It also supports using the ``-p`` argument to identify packers from the PEiD signature database.
 Help message:
@@ -370,7 +373,7 @@ For example:
 info
 ----
 
-``help`` will display metadata related to a given conversation, such as:
+``info`` will display metadata related to a given conversation, such as:
 
 - Server IP and PORT
 - Packet sent time
@@ -415,7 +418,7 @@ For example:
 plugin
 ------
 CapTipper supports external plugins.
-Extensive information regarding the plugin infrastructure can be found here.
+Extensive information regarding the plugin infrastructure can be found in the :doc:`Plugins` chapter.
 
 The ``plugin`` command allows the user to use plugins that are stored in the ``plugins\`` folder. Its help message:
 ::
@@ -487,7 +490,7 @@ Examples:
 
 objects
 -------
-The ``objects`` command display the objects list described in Core#objects.
+The ``objects`` command display the objects list described in the :doc:`Core` chapter.
 
 ::
 
@@ -545,7 +548,7 @@ Example searching for the domain `rabiorik` in all objects:
      wlkzkir.cgi [7]:
         (8,256) : 22 (@RELEASE@) Server at rabiorik.ru Port 80</address></b
 
-Example searching `create_frame` in a specific object:
+Following, and example searching `create_frame` in a specific object:
 ::
 
     CT> find 0 create_frame
@@ -655,7 +658,7 @@ Example of the ``jsbeautify`` on the "create_frame" function in the javascript c
 
 vt
 ----
-``vt`` sends a given object id's MD5 to VirusTotal to see if it is recognized by any of the Anti-Virus providers.
+``vt`` sends a given object ids MD5 to VirusTotal to see if it is recognized by any of the Anti-Virus providers.
 
 The use of ``vt`` requires a VirusTotal Public API key.
 
@@ -734,7 +737,7 @@ The ``iframes`` command searches for iframe tags as part of the html source.
 client
 ------
 
-Display all collected data on the client seen in the PCAP.
+Display all collected data on the client found in the PCAP.
 
 ::
 
@@ -781,7 +784,7 @@ This is done by overriding ``sys.stdout``.
     Logging to /Users/omriher/Temp/Nuclear-110615.txt
 
 The logging only includes data from after using the ``output`` command.
-In order to stop logging use ``stop`` as the path argument.
+In order to stop logging use ``stop`` as the command argument.
 
 ::
 

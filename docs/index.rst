@@ -13,10 +13,6 @@ and contains internal tools, with a powerful interactive console, for analysis a
 The tool provides the security researcher with easy access to the files and the understanding of the network flow,
 and is useful when trying to research exploits, pre-conditions, versions, obfuscations, plugins and shellcodes.
 
-Feeding CapTipper with a drive-by traffic capture (e.g of an exploit kit) displays the user with the requests URI's that were sent and responses meta-data.
-The user can at this point browse to http://127.0.0.1/[URI] and receive the response back to the browser.
-In addition, an interactive shell is launched for deeper investigation using various commands such as: hosts, hexdump, info, ungzip, body, client, dump and more...
-
 CapTipper is released under the GPLv3_ license and is copyrighted by `Omri Herscovici`_.
 The source code is available on `GitHub`__.
 
@@ -30,6 +26,7 @@ Contents:
    Plugins
    Reporting
    Webserver
+   Whatype
 
 .. _CapTipper: https://github.com/omriher/CapTipper
 __ CapTipper_
