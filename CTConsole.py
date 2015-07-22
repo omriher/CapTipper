@@ -165,10 +165,10 @@ class console(cmd.Cmd, object):
         except Exception,e:
             print str(e)
 
-
     def help_body(self):
         print newLine + "Displays the text representation of the body"
-        print newLine + "Ufsage: body <conv_id> [size=" + str(DEFAULT_BODY_SIZE) + "]"
+        print newLine + "Usage: body <conv_id> [size=" + str(DEFAULT_BODY_SIZE) + "]"
+        print newLine + "       use 'all' as size to retrieve entire body"
 
     def do_open(self, line):
         try:
@@ -188,11 +188,12 @@ class console(cmd.Cmd, object):
                 if bOpen:
                     id = int(l[0])
                     request = CTCore.conversations[id].uri
-                    open_url = 'http://' + CTCore.HOST + ":" + str(CTCore.PORT) + request
+                    host = CTCore.conversations[id].host
+                    open_url = 'http://' + CTCore.HOST + ":" + str(CTCore.PORT) + "/" + host + request
                     print("  Opening {} in default browser".format(open_url))
                     import webbrowser
                     webbrowser.open(open_url)
-        except Exception,e:
+        except Exception, e:
             print str(e)
 
     def help_open(self):
@@ -260,7 +261,8 @@ class console(cmd.Cmd, object):
 
     def help_hexdump(self):
         print "Display hexdump of given object"
-        print newLine + "Usage: hexdump <conv_id>" + newLine
+        print newLine + "Usage: hexdump <conv_id> [size=256]" + newLine
+        print newLine + "       use 'all' as size to retrieve entire body"
 
     def do_head(self,line):
         try:

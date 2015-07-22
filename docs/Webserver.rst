@@ -26,6 +26,16 @@ an error will be displayed and the console will be prompted normally.
 
 Every request to the webserver is logged to ``CTCore.request_logs`` list object and is viewable at any time using the command ``log`` from CapTippers console.
 
+The structure of each conversation url is as such:
+
+.. code:: python
+
+    http://localhost/<host>/<uri>
+
+for example:
 
 
+.. code:: python
+
+    http://localhost/example.com/index.html
 

@@ -156,7 +156,7 @@ def show_hosts():
     for host, ip in hosts.keys():
         print " " + host + " ({})".format(ip)
         hostkey = (host, ip)
-        for host_uri in hosts[hostkey]:
+        for host_uri,obj_num in hosts[hostkey]:
             #chr_num = 195 # Extended ASCII tree symbol
             chr_num = 9500  # UNICODE tree symbol
 
@@ -165,7 +165,11 @@ def show_hosts():
                 #chr_num = 192 # Extended ASCII tree symbol
                 chr_num = 9492 # UNICODE tree symbol
 
-            print " " + unichr(chr_num) + "-- " + host_uri.encode('utf8')
+            try:
+                print " " + unichr(chr_num) + "-- " + host_uri.encode('utf8') + "   [{}]".format(obj_num)
+            except:
+                print " |-- " + host_uri.encode('utf8') + "   [{}]".format(obj_num)
+
         print newLine
 
 def check_duplicate_url(host, uri):
@@ -206,11 +210,27 @@ def getShortURI(uri):
         shortURL = uri[0:int(SHORT_URI_SIZE/2)] + "..." + uri[len(uri)-int(SHORT_URI_SIZE/2):len(uri)]
     return shortURL
 
+def byTime(Conv):
+    return int(Conv.req_microsec)
+
+def finish_convs():
+    conversations.sort(key=byTime)
+    for cnt, conv in enumerate(conversations):
+        conv.id = cnt
+
+def check_order(Conv):
+    for curr_conv in conversations:
+        if int(curr_conv.req_microsec) > int(str(Conv.time)[:10]):
+            return False
+
+    return True
+
 def finish_conversation(self):
 
     if not (check_duplicate_url(self.host, self.uri)):
-        if check_duplicate_uri(self.uri):
-            self.uri = create_next_uri(self.uri)
+
+        #if check_duplicate_uri(self.uri):
+        #    self.uri = create_next_uri(self.uri)
 
         obj_num = len(conversations)
         conversations.append(namedtuple('Conv',
@@ -220,9 +240,9 @@ def finish_conversation(self):
         host_tuple = (self.host, str(self.remote_host[0]) + ":" + str(self.remote_host[1]))
         # hosts list
         if (hosts.has_key(host_tuple)):
-            hosts[host_tuple].append(self.uri + "   [" + str(obj_num) + "]")
+            hosts[host_tuple].append((self.uri,str(obj_num)))
         else:
-            hosts[host_tuple] = [self.uri + "   [" + str(obj_num) + "]"]
+            hosts[host_tuple] = [(self.uri,str(obj_num))]
 
         # convs list
         conversations[obj_num].id = obj_num
@@ -299,7 +319,7 @@ def show_conversations():
             elif ("image" in conv.res_type):
                 typecolor = colors.GREEN
 
-            print str(cnt) + ": " + colors.PINK,
+            print str(conv.id) + ": " + colors.PINK,
             if (b_use_short_uri):
                 print conv.short_uri,
             else:

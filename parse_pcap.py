@@ -97,6 +97,7 @@ class HttpConn:
 
     def finish(self):
         self.http_parser.finish()
+        CTCore.finish_convs()
 
 def get_file_format(infile):
     """
