@@ -165,7 +165,7 @@ def show_hosts():
             chr_num = 9500  # UNICODE tree symbol
 
             # Checks if last one
-            if (host_uri == hosts[hostkey][len(hosts[hostkey]) - 1]):
+            if ((host_uri,obj_num) == hosts[hostkey][len(hosts[hostkey]) - 1]):
                 #chr_num = 192 # Extended ASCII tree symbol
                 chr_num = 9492 # UNICODE tree symbol
 
