@@ -23,6 +23,7 @@ import CTCore
 from CTConsole import console
 from CTServer import server
 from CTReport import Report
+import CTPlugin
 
 def main(args, pcap_file):
     if (args.update):
@@ -74,17 +75,20 @@ def main(args, pcap_file):
         try:
             CTCore.ungzip_all()
             CTCore.dump_all_files(args.dump[0],True)
-        except Exception, e:
-            print e
+        except Exception, ed:
+            print ed
     # If chosen to create a report
     elif (args.report is not None):
         report = Report(CTCore.hosts, CTCore.conversations, CTCore.VERSION + " b" + CTCore.BUILD)
         report.CreateReport(args.report[0])
     else:
         try:
+            CTPlugin.init_plugins()
+            
             interpreter = console()
             interpreter.cmdloop()
-        except:
+        except Exception, e:
+            print str(e)
             print (CTCore.newLine + 'Exiting CapTipper')
             if (CTCore.web_server_turned_on):
                 CTCore.web_server.shutdown()

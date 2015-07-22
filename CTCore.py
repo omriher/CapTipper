@@ -31,6 +31,8 @@ objects = []
 Errors = []
 hosts = collections.OrderedDict()
 request_logs = []
+plugins = []
+plugins_folder = "plugins/"
 pcap_file = ""
 VERSION = "0.2"
 BUILD = "10"
@@ -48,6 +50,8 @@ USAGE = ("CapTipper.py <pcap_file> [options]" + newLine + newLine +
 web_server_turned_on = False
 HOST = "localhost"
 PORT = 80
+
+console_output = False
 
 b_use_short_uri = False
 b_auto_ungzip = False
@@ -359,26 +363,26 @@ def hexdump(src, length=16):
 
 from HTMLParser import HTMLParser
 
-class CapTipperHTMLParser(HTMLParser):
+class srcHTMLParser(HTMLParser):
     def __init__(self, find_tag):
         HTMLParser.__init__(self)
         self.find_tag = find_tag
-        self.iframes = []
+        self.tags = []
 
     def handle_starttag(self, tag, attrs):
         if tag == self.find_tag:
             for att in attrs:
-                if (att[0] == "src"):
-                    self.iframes.append(att[1])
+                if att[0] == "src":
+                    self.tags.append(att[1])
 
-    def print_iframes(self):
-        if (len(self.iframes) > 0):
-            print " " + str(len(self.iframes)) + " Iframe(s) Found!" + newLine
+    def print_objects(self):
+        if len(self.tags) > 0:
+            print " " + str(len(self.tags)) + " {}(s) Found!".format(self.find_tag) + newLine
 
-            for cnt, iframe in enumerate(self.iframes):
-                print " [I] " + str(cnt + 1) + " : " + iframe
+            for cnt, curr_tag in enumerate(self.tags):
+                print " [I] " + str(cnt + 1) + " : " + curr_tag
         else:
-            print "     No Iframes Found"
+            print "     No {} Found".format(self.find_tag)
 
 def update_captipper():
     currentVersion = "v{} b{}".format(VERSION,BUILD)
@@ -559,7 +563,7 @@ def ungzip_all():
                 try:
                     id = int(conv.id)
                     name = get_name(id)
-                    obj_num, name = ungzip(id)
+                    obj_num, name = ungzip_and_add(id)
                     if obj_num != -1:
                         print " GZIP Decompression of object {} ({}) successful!".format(str(id), name)
                         print " New object created: {}".format(obj_num) + newLine
@@ -576,8 +580,12 @@ def ungzip(id):
         name = get_name(id)
         decomp = gzip.GzipFile('', 'rb', 9, StringIO.StringIO(body))
         page = decomp.read()
-        obj_num = add_object("ungzip",page,id=id)
 
+    return page, name
+
+def ungzip_and_add(id):
+    page, name = ungzip(id)
+    obj_num = add_object("ungzip",page,id=id)
     return obj_num, name
 
 def dump_all_files(path, dump_exe):
@@ -598,3 +606,21 @@ def dump_file(id, path):
     f.write(body)
     f.close()
     print " Object {} written to {}".format(id, path)
+
+def find_plugin(name):
+    for plug in plugins:
+        if plug.name.lower() == name.lower():
+            return plug.module
+    return None
+
+def run_plugin(name, *args):
+    try:
+        module = find_plugin(name)
+        if module:
+            current = module()
+            result = current.run(*args)
+            return result
+        else:
+            return "Plugin " + name + " Does not exist"
+    except Exception,e:
+        print str(e)

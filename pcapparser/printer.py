@@ -60,7 +60,11 @@ class HttpPrinter(object):
             self._println(req_header.raw_data)
             #self._println()
             self.uri = req_header.uri
-            self.req = req_header.raw_data
+            if req_body is None:
+                req_body = ""
+            else:
+                req_body = "\r\n\r\n" + req_body
+            self.req = req_header.raw_data + req_body
             self.host = req_header.host
             self.referer = req_header.referer
             self.method = req_header.method
