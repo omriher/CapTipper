@@ -87,8 +87,7 @@ def main(args, pcap_file):
             
             interpreter = console()
             interpreter.cmdloop()
-        except Exception, e:
-            print str(e)
+        except:
             print (CTCore.newLine + 'Exiting CapTipper')
             if (CTCore.web_server_turned_on):
                 CTCore.web_server.shutdown()
