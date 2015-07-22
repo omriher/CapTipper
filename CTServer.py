@@ -31,7 +31,7 @@ class HTTPRequest(BaseHTTPRequestHandler):
 class server(Thread):
     def __init__(self):
         super(server, self).__init__()
-        self.srv = SocketServer.TCPServer((CTCore.HOST, CTCore.PORT), TCPHandler)
+        self.srv = SocketServer.ThreadingTCPServer((CTCore.HOST, CTCore.PORT), TCPHandler)
 
     def run(self):
         print CTCore.newLine + CTCore.colors.GREEN + "[+]" + CTCore.colors.END + " Started Web Server on http://" + CTCore.HOST + ":" + str(CTCore.PORT)
@@ -136,7 +136,7 @@ class TCPHandler(SocketServer.BaseRequestHandler):
             else:
                 get_uri = '/' + '/'.join(request.path.split('/')[2:])
 
-            self.log(get_uri)
+            self.log(req_host + get_uri)
 
             req_sent = False
             for conv in CTCore.conversations:

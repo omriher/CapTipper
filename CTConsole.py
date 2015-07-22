@@ -14,7 +14,6 @@ import cmd
 import os
 import time
 import hashlib
-import readline
 import sys
 
 import CTCore
@@ -177,7 +176,7 @@ class console(cmd.Cmd, object):
     def help_body(self):
         print newLine + "Displays the text representation of the body"
         print newLine + "Usage: body <conv_id> [size=" + str(DEFAULT_BODY_SIZE) + "]"
-        print newLine + "       use 'all' as size to retrieve entire body"
+        print           "       use 'all' as size to retrieve entire body"
 
     def do_open(self, line):
         try:
@@ -271,7 +270,7 @@ class console(cmd.Cmd, object):
     def help_hexdump(self):
         print "Display hexdump of given object"
         print newLine + "Usage: hexdump <conv_id> [size=256]" + newLine
-        print newLine + "       use 'all' as size to retrieve entire body"
+        print "       use 'all' as size to retrieve entire body"
 
     def do_head(self,line):
         try:
@@ -805,6 +804,11 @@ class console(cmd.Cmd, object):
                     print "Couldn't open logfile at {} : {}".format(path, open_res)
         except Exception, e:
             print str(e)
+
+    def help_output(self):
+        print newLine + "Logs all commands and results to a file"
+        print newLine + "usage: output <file>"
+        print            "      use 'stop' as the file argument to stop logging"
 
     def help_update(self):
         print newLine + "Update CapTipper to the newest version"

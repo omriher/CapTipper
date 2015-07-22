@@ -48,7 +48,7 @@ USAGE = ("CapTipper.py <pcap_file> [options]" + newLine + newLine +
 
 # WS configurations
 web_server_turned_on = False
-HOST = "localhost"
+HOST = "0.0.0.0"
 PORT = 80
 
 console_output = False
@@ -217,10 +217,13 @@ def getShortURI(uri):
 def byTime(Conv):
     return int(Conv.req_microsec)
 
-def finish_convs():
+def sort_convs():
     conversations.sort(key=byTime)
     for cnt, conv in enumerate(conversations):
         conv.id = cnt
+        add_object("body", conv.res_body)
+        objects[cnt].name = conv.filename
+
 
 def check_order(Conv):
     for curr_conv in conversations:
@@ -256,7 +259,7 @@ def finish_conversation(self):
         conversations[obj_num].short_uri = getShortURI(self.uri)
         conversations[obj_num].req = self.req
         conversations[obj_num].res_body = self.res_body
-        add_object("body", self.res_body)
+
 
         try:
             # FindMagic
@@ -303,7 +306,6 @@ def finish_conversation(self):
         if (conversations[obj_num].filename == ""):
             conversations[obj_num].filename = str(obj_num) + ".html"
 
-        objects[obj_num].name = conversations[obj_num].filename
         conversations[obj_num].res_len = self.res_len
 
 # Display all found conversations

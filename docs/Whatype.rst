@@ -3,6 +3,9 @@ Whatype
 =======
 
 Whatype is an independent file type identification python library.
+File Type Identification provides “magic”-like analysis of a file’s content to determine its true payload.
+
+After spending some time trying to find a file identification library that suits CapTipper's needs (cross-platform, cross-environment, accepts file stream, and does not require too much dependencies), I came up short and decided to write one myself.
 Whatype was originally developed for `CapTipper <https://github.com/omriher/CapTipper>`__ but is also an independent library and can be found on `GitHub`__.
 
 
@@ -11,6 +14,9 @@ The magic bytes signatures are stored in ``magics.csv``, with the format of:
 .. code:: python
 
     File Description, Magic bytes (Offset 0), Extenstion, Obligatory strings
+
+My initial goal was only to use it as part of CapTipper, so currently it supports ~50 of the most common and relevant file formats:
+Executables, PDF, JAVA, SWF, Silverlight, HTML, ZIP, and more…
 
 Installation
 -------------
@@ -63,7 +69,7 @@ Results returns in the form of a tuple:
     ('Java archive', 'JAR')
 
 
-
+I would like to invite the open-source community to contribute to the Whatype project (currently in beta release phase) and help create a broader and more accurate signature base, improve the identification performance and hopefully help serve other developers that encounter the same problem.
 
 .. _Whatype: https://github.com/omriher/Whatype
 __ Whatype_

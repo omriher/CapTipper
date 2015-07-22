@@ -12,7 +12,7 @@ in order to avoid from endangering the researchers machine in case the tool is u
 In this way, there is also no concern for any AntiViruses to pop up while messing with the files since they are only
 stored in CapTippers memory datasets (Described in :doc:`Core`).
 
-The default Webserver configurations can be found in ``CTCore.py`` in the following variables:
+The default webserver configurations can be found in ``CTCore.py`` in the following variables:
 
 ::
 
@@ -30,7 +30,7 @@ The structure of each conversation url is as such:
 
 .. code:: python
 
-    http://localhost/<host>/<uri>
+    http://<captipper_server>/<host>/<uri>
 
 for example:
 

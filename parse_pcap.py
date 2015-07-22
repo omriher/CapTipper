@@ -97,7 +97,6 @@ class HttpConn:
 
     def finish(self):
         self.http_parser.finish()
-        CTCore.finish_convs()
 
 def get_file_format(infile):
     """
@@ -171,6 +170,8 @@ def pcap_file(conn_dict, infile):
             # if is a http request?
             if utils.is_request(tcp_pac.body):
                 conn_dict[key] = HttpConn(tcp_pac)
+
+    CTCore.sort_convs()
 
 
 def run(file_path):
