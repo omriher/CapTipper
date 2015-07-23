@@ -197,7 +197,11 @@ class console(cmd.Cmd, object):
                     id = int(l[0])
                     request = CTCore.conversations[id].uri
                     host = CTCore.conversations[id].host
-                    open_url = 'http://' + CTCore.HOST + ":" + str(CTCore.PORT) + "/" + host + request
+                    server_addr = CTCore.HOST
+                    if server_addr == "0.0.0.0":
+                        server_addr = "127.0.0.1"
+
+                    open_url = 'http://' + server_addr + ":" + str(CTCore.PORT) + "/" + host + request
                     print("  Opening {} in default browser".format(open_url))
                     import webbrowser
                     webbrowser.open(open_url)
