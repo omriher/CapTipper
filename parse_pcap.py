@@ -171,8 +171,6 @@ def pcap_file(conn_dict, infile):
             if utils.is_request(tcp_pac.body):
                 conn_dict[key] = HttpConn(tcp_pac)
 
-    CTCore.sort_convs()
-
 
 def run(file_path):
     conn_dict = OrderedDict()
@@ -184,6 +182,8 @@ def run(file_path):
         try:
             pcap_file(conn_dict, infile)
         finally:
+            time.sleep(0.1)
+            CTCore.sort_convs()
             infile.close()
     finally:
         for conn in conn_dict.values():
