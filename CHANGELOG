@@ -1,5 +1,29 @@
 
-CapTipper 0.2 b08 (26-03-2015 - Black Hat Arsenal)
+CapTipper 0.3 b12 (05-08-2015 - Black Hat USA Arsenal)
+============================
+
+ * New Features:
+
+    - Plugin support infrastructure
+    - New Plugin: check_host
+    - New Plugin: find_scripts
+    - Full Documentation
+    - Some refactoring
+    - New Logo
+    - Output log
+    - Added: saz2pcap script
+
+ * Fixes:
+
+    - Surround Dump all with try/except
+    - User-agent doesn't exists (HTML report bug)
+    - 'req' not showing request body
+    - Confirm conversations are sorted by request time
+    - Changed webserver storage and access method
+    - Seperated uri and obj_num in core's hosts dataset
+
+
+CapTipper 0.2 b08 (26-03-2015 - Black Hat Singapore Arsenal)
 ============================
 
  * New Features:

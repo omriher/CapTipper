@@ -248,7 +248,9 @@ class console(cmd.Cmd, object):
 
     def help_dump(self):
         print newLine + "Dumps the object file to a given folder"
-        print newLine + "Usage: dump <conv_id> <path>" + newLine
+        print newLine + "Usage: dump <conv_id> <path> [-e]" + newLine
+        print "Options:"
+        print "   -e       - ignores executables" + newLine
         print "Example: dump 4 c:" + chr(92) + "files" + chr(92) + "index.html"
         print "         Dumps object 4 to given path" + newLine
         print "Example: dump all c:" + chr(92) + "files"
@@ -273,7 +275,7 @@ class console(cmd.Cmd, object):
 
     def help_hexdump(self):
         print "Display hexdump of given object"
-        print newLine + "Usage: hexdump <conv_id> [size=256]" + newLine
+        print newLine + "Usage: hexdump <conv_id> [size=" + str(DEFAULT_BODY_SIZE) + "]"
         print "       use 'all' as size to retrieve entire body"
 
     def do_head(self,line):
@@ -352,7 +354,7 @@ class console(cmd.Cmd, object):
 
     def do_client(self,line):
         try:
-            print newLine + "Info of Client: " + newLine
+            print newLine + "Client Info: " + newLine
             for key, value in CTCore.client.get_information().iteritems():
                 print " {0:17}:  {1}".format(key, value)
             print ""
@@ -574,8 +576,8 @@ class console(cmd.Cmd, object):
     def help_peinfo(self):
         print newLine + "Display PE info of the file"
         print newLine + "Usage: peinfo <obj_id> [-p]" + newLine
-        print newLine + "OPTIONS:"
-        print newLine + "-p     -   Check for packers"
+        print "OPTIONS:"
+        print "     -p     -   Check for packers"
 
     def do_find(self,line):
         try:
@@ -702,8 +704,8 @@ class console(cmd.Cmd, object):
 
     def help_jsbeautify(self):
         print newLine + "Display JavaScript code after beautify"
-        print newLine + "Usage: jsbeautify <obj_id> <offset> <len>" + newLine
-        print newLine + "Example: jsbeautify slice <obj_id> <offset> <len | eob>"
+        print newLine + "Usage: jsbeautify <obj / slice> <object_id> <offset> <length>"
+        print newLine + "Example: jsbeautify slice <object_id> <offset> <len | eob>"
         print newLine + "Example: jsbeautify obj <object_id>"
 
     def do_update(self, line):
@@ -773,7 +775,7 @@ class console(cmd.Cmd, object):
         return completions
 
     def help_plugin(self):
-        print "Launching an external plugin (Alias: p)" + newLine
+        print "Launching an external plugin (alias: p)" + newLine
         print "usage: plugin <plugin_name / plugin_id> [-l] <*args>"
         print "     -l      - List all available plugins" + newLine
         print "examples:"
