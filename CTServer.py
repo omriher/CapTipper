@@ -116,46 +116,70 @@ class TCPHandler(SocketServer.BaseRequestHandler):
         CTCore.request_logs.append("[" + str(now_s.isoformat()) + "] " + self.client_address[0] + " : " + uri)
 
     def handle(self):
-        self.data = self.request.recv(1024).strip()
+        try:
+            self.data = self.request.recv(1024).strip()
+            request = HTTPRequest(self.data)
 
-        request = HTTPRequest(self.data)
+            if self.data != "":
+                host_folder = self.get_domain_folder(request.path)
 
-        if (self.data != ""):
-            host_folder = self.get_domain_folder(request.path)
-
-            using_host_folder = False
-            for chost,ip_port in CTCore.hosts.keys():
-                if chost.lower() == host_folder.lower():
-                    req_host = chost
-                    using_host_folder = True
-                    break
-
-            if not using_host_folder:
-                req_host = request.headers['host']
-                get_uri = request.path
-            else:
-                get_uri = '/' + '/'.join(request.path.split('/')[2:])
-
-            self.log(req_host + get_uri)
-
-            req_sent = False
-            for conv in CTCore.conversations:
-                if conv.host == req_host:
-                    if (self.check_request(conv.uri, get_uri) == True):
-                        resp = conv.res_head
-                        if conv.orig_chunked_resp != "":
-                            resp = resp + "\r\n\r\n" + conv.orig_chunked_resp
-                        else:
-                            resp = resp + "\r\n\r\n"
-                            if conv.orig_resp:
-                                resp += conv.orig_resp
-
-                        self.request.send(resp)
-                        req_sent = True
+                using_host_folder = False
+                for chost,ip_port in CTCore.hosts.keys():
+                    if chost.lower() == host_folder.lower():
+                        req_host = chost
+                        using_host_folder = True
                         break
 
-            if not req_sent:
-                if get_uri == "/":
-                    self.request.send(self.build_index())
+                if not using_host_folder:
+                    req_host = request.headers['host']
+                    if req_host == "127.0.0.1":
+                        localhost = "http://127.0.0.1/"
+                        try:
+                            referrer = request.headers['referer']
+                            if referrer.find(localhost) == 0:
+                                end_of_host = referrer.find("/",len(localhost) + 1)
+                                req_host = referrer[len(localhost):end_of_host]
+                        except:
+                            pass
+
+                        if request.path.find(req_host) == 1 or req_host == "127.0.0.1":
+                            last_req = CTCore.request_logs[-1]
+                            last_url = last_req[last_req.find(' : ') + 3:]
+                            last_req_parsed = urlparse("http://" + last_url)
+                            req_host = last_req_parsed.netloc
+
+                    get_uri = request.path
                 else:
-                    self.request.send("HTTP/1.1 404 Not Found")
+                    get_uri = '/' + '/'.join(request.path.split('/')[2:])
+
+                try:
+                    req_sent = False
+                    for conv in CTCore.conversations:
+                        if conv.host == req_host:
+                            if (self.check_request(conv.uri, get_uri) == True):
+                                resp = conv.res_head
+                                if conv.orig_chunked_resp != "":
+                                    resp = resp + "\r\n\r\n" + conv.orig_chunked_resp
+                                else:
+                                    resp = resp + "\r\n\r\n"
+                                    if conv.orig_resp:
+                                        resp += conv.orig_resp
+
+                                self.request.send(resp)
+                                req_sent = True
+                                res = conv.res_num
+                                break
+
+                    if not req_sent:
+                        if get_uri == "/":
+                            self.request.send(self.build_index())
+                        else:
+                            self.request.send("HTTP/1.1 404 Not Found")
+                            res = "404 Not Found"
+                except Exception, e:
+                    res = str(e)
+                finally:
+                    self.log(req_host + get_uri + " - " + res)
+        except Exception, e:
+            pass
+            
