@@ -1,7 +1,7 @@
 Welcome to CapTipper's documentation!
 =====================================
 
-**Documentation is under construction**
+.. image:: http://4.bp.blogspot.com/-uuRE1KkS5Jo/Vb8j-cfEuHI/AAAAAAAAeY4/MltsTu7jG5E/s1600/CapTipper_logo.png
 
 What is CapTipper?
 ------------------
