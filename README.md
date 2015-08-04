@@ -1,5 +1,8 @@
 ##CapTipper v0.2
 
+[Logo]: http://4.bp.blogspot.com/-uuRE1KkS5Jo/Vb8j-cfEuHI/AAAAAAAAeY4/MltsTu7jG5E/s1600/CapTipper_logo.png
+![Logo]
+
 CapTipper v0.2: http://www.omriher.com/2015/03/captipper-02-released.html  
 CapTipper v0.1: http://www.omriher.com/2015/01/captipper-malicious-http-traffic.html  
 
