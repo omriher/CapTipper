@@ -3,7 +3,7 @@ Core
 ====
 
 CapTipper is using a modified version of the pcap_parser library in order to parse the PCAP file.
-The core class implements most of the functions executed by the console and is in charge of creating and storing all of the PCAP information.
+The CapTipper Core class implements most of the functions executed by the CapTipper console and is in charge of creating and storing all of the PCAP information.
 There are three main datasets handled by CapTippers core:
 
 * Conversations

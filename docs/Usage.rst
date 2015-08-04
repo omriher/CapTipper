@@ -2,7 +2,7 @@
 Usage
 =======
 
-Feeding CapTipper with a drive-by traffic capture (e.g of an exploit kit) displays the user with the requests URI's that were sent and responses meta-data.
+Feeding CapTipper with a drive-by traffic capture (e.g. of an exploit kit) displays the user with the requests URI's that were sent and responses meta-data.
 The user can at this point browse to http://127.0.0.1/<host>/[URI] and receive the response back to the browser.
 In addition, an interactive shell is launched for deeper investigation using various commands such as: hosts, hexdump, info, ungzip, body, client, dump and more...
 

@@ -10,8 +10,6 @@ The HTML report includes full flow details, client information, interesting bina
 
 The report is expected to expand and include more information along with the development of CapTippers new abilities.
 
-HTML Report screenshots:
-
 JSON report
 -----------
 The JSON file is made of 4 main parts:
