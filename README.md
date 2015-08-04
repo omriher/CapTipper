@@ -18,6 +18,8 @@ Feeding CapTipper with a drive-by traffic capture (e.g of an exploit kit) displa
 The user can at this point browse to http://127.0.0.1/[host]/[URI] and receive the response back to the browser.  
 In addition, an interactive shell is launched for deeper investigation using various commands such as: hosts, hexdump, info, ungzip, body, client, dump and more...
 
+Documentation: http://captipper.readthedocs.org
+
 [ScreenShot]: http://3.bp.blogspot.com/-7XrSKP1BHzE/VLRGBR3cQ0I/AAAAAAAAZso/3FpWTRi8rYU/s1600/CapTipperScreenShot.png
 
 ![ScreenShot]
