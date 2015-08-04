@@ -1,4 +1,4 @@
-##CapTipper v0.2
+##CapTipper v0.3
 
 [Logo]: http://4.bp.blogspot.com/-uuRE1KkS5Jo/Vb8j-cfEuHI/AAAAAAAAeY4/MltsTu7jG5E/s1600/CapTipper_logo.png
 ![Logo]
@@ -14,7 +14,7 @@ The tool provides the security researcher with easy access to the files and the 
 and is useful when trying to research exploits, pre-conditions, versions, obfuscations, plugins and shellcodes.
 
 Feeding CapTipper with a drive-by traffic capture (e.g of an exploit kit) displays the user with the requests URI's that were sent and responses meta-data.  
-The user can at this point browse to http://127.0.0.1/[URI] and receive the response back to the browser.  
+The user can at this point browse to http://127.0.0.1/<host>/[URI] and receive the response back to the browser.  
 In addition, an interactive shell is launched for deeper investigation using various commands such as: hosts, hexdump, info, ungzip, body, client, dump and more...
 
 [ScreenShot]: http://3.bp.blogspot.com/-7XrSKP1BHzE/VLRGBR3cQ0I/AAAAAAAAZso/3FpWTRi8rYU/s1600/CapTipperScreenShot.png
