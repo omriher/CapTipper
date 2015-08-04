@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # This is probably useful to like 4 people. Some of the packet inection stuff is taken from rule2alert https://code.google.com/p/rule2alert/ which is GPLv2 so I guess this is well.
 # This ultra alpha if everything isn't right it will fall on its face and probably cause you to run away from it screaming into the night
+# This file is part of fiddler2pcap project (https://github.com/EmergingThreats/fiddler2pcap) by David McNelis
 
 #TODO:
 # 1. Optionally trim request line to start with uripath 
