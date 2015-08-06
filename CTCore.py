@@ -224,6 +224,13 @@ def sort_convs():
         add_object("body", conv.res_body)
         objects[cnt].name = conv.filename
 
+        host_tuple = (conv.host, conv.server_ip_port)
+        # hosts list
+        if (hosts.has_key(host_tuple)):
+            hosts[host_tuple].append((conv.uri,str(cnt)))
+        else:
+            hosts[host_tuple] = [(conv.uri,str(cnt))]
+
 
 def check_order(Conv):
     for curr_conv in conversations:
@@ -244,12 +251,8 @@ def finish_conversation(self):
             ['id','server_ip_port', 'uri','req','res_body','res_head','res_num','res_type','host','referer', \
             'filename','method','redirect_to','req_microsec', 'res_len','magic_name', 'magic_ext']))
 
-        host_tuple = (self.host, str(self.remote_host[0]) + ":" + str(self.remote_host[1]))
-        # hosts list
-        if (hosts.has_key(host_tuple)):
-            hosts[host_tuple].append((self.uri,str(obj_num)))
-        else:
-            hosts[host_tuple] = [(self.uri,str(obj_num))]
+
+
 
         # convs list
         conversations[obj_num].id = obj_num
