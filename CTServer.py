@@ -124,6 +124,7 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                 host_folder = self.get_domain_folder(request.path)
 
                 using_host_folder = False
+                using_host_header = False
                 for chost,ip_port in CTCore.hosts.keys():
                     if chost.lower() == host_folder.lower():
                         req_host = chost
@@ -132,21 +133,43 @@ class TCPHandler(SocketServer.BaseRequestHandler):
 
                 if not using_host_folder:
                     req_host = request.headers['host']
-                    if req_host == "127.0.0.1":
-                        localhost = "http://127.0.0.1/"
-                        try:
-                            referrer = request.headers['referer']
-                            if referrer.find(localhost) == 0:
-                                end_of_host = referrer.find("/",len(localhost) + 1)
-                                req_host = referrer[len(localhost):end_of_host]
-                        except:
-                            pass
 
-                        if request.path.find(req_host) == 1 or req_host == "127.0.0.1":
-                            last_req = CTCore.request_logs[-1]
-                            last_url = last_req[last_req.find(' : ') + 3:]
-                            last_req_parsed = urlparse("http://" + last_url)
-                            req_host = last_req_parsed.netloc
+                    #check if host header is in domains list
+                    for chost, ip_port in CTCore.hosts.keys():
+                        if chost.lower() == req_host.lower():
+                            req_host = chost
+                            using_host_header = True
+                            break
+
+                    if not using_host_header:
+                        if req_host == "127.0.0.1":
+                            localhost = "http://127.0.0.1/"
+                            try:
+                                # set req_host to be referer
+                                referrer = request.headers['referer']
+                                # if referer isn't 127.0.0.1
+                                if referrer.find(localhost) == 0:
+                                    end_of_host = referrer.find("/",len(localhost) + 1)
+                                    req_host = referrer[len(localhost):end_of_host]
+                            except:
+                                pass
+
+                            # set req_host to be the last request
+                            if (len(CTCore.request_logs) > 0) and (request.path.find(req_host) == 1 or req_host == "127.0.0.1"):
+                                last_req = CTCore.request_logs[-1]
+                                last_url = last_req[last_req.find(' : ') + 3:]
+                                last_req_parsed = urlparse("http://" + last_url)
+                                req_host = last_req_parsed.netloc
+                        else:
+                            try:
+                                # 'try' for the case no referer exists ("/")
+                                referrer = request.headers['referer']
+                                start_of_uri = referrer.find("/", len("http://") + 1)
+                                if (start_of_uri > 0):
+                                    end_of_host = referrer.find("/", start_of_uri + 1)
+                                    req_host = referrer[start_of_uri + 1:end_of_host]
+                            except:
+                                pass
 
                     get_uri = request.path
                 else:
