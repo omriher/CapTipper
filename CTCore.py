@@ -35,7 +35,7 @@ plugins = []
 plugins_folder = "plugins/"
 pcap_file = ""
 VERSION = "0.3"
-BUILD = "11"
+BUILD = "13"
 ABOUT = "CapTipper v" + VERSION + " b" + BUILD + " - Malicious HTTP traffic explorer tool" + newLine + \
         "Copyright 2015 Omri Herscovici <omriher@gmail.com>" + newLine
 
