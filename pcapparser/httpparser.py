@@ -188,6 +188,11 @@ class HttpParser(object):
 
         lines = [line]
         header_dict = self.read_headers(reader, lines)
+
+        # In case proxy was used
+        if req_header.uri.find("http://") == 0:
+            req_header.uri = req_header.uri[len("http://") + len(header_dict[b"host"]):]
+
         for key in header_dict.iterkeys():
             CTCore.client.add_header(key, header_dict[key])
 
