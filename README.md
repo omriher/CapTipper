@@ -29,7 +29,7 @@ Documentation: http://captipper.readthedocs.org
 ```sh
 Usage: ./CapTipper.py <PCAP_file> [-p] [web_server_port=80]
 ```
-Let's analyze the following Nuclear EK drive-by infection PCAP [2014-11-06-Nuclear-EK-traffic.pcap](http://www.malware-traffic-analysis.net/2014/11/06/2014-11-06-Nuclear-EK-traffic.pcap)
+Let's analyze the following Nuclear EK drive-by infection PCAP [2014-11-06-Nuclear-EK-traffic.pcap](http://malware-traffic-analysis.net/2014/11/06/2014-11-06-Nuclear-EK-traffic.pcap.zip)
 ```sh
 C:\CapTipper> CapTipper.py "C:\NuclearFiles\2014-11-06-Nuclear-EK-traffic.pcap"
 
