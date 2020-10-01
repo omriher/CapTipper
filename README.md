@@ -1,7 +1,9 @@
-##CapTipper v0.3
+## CapTipper v0.3
 
 [Logo]: http://4.bp.blogspot.com/-uuRE1KkS5Jo/Vb8j-cfEuHI/AAAAAAAAeY4/MltsTu7jG5E/s1600/CapTipper_logo.png
 ![Logo]
+
+! This Branch is adjusted to Python3 !
 
 CapTipper v0.3: http://www.omriher.com/2015/08/captipper-v03-is-out.html  
 CapTipper v0.2: http://www.omriher.com/2015/03/captipper-02-released.html  
