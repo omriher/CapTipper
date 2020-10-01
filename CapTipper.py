@@ -30,7 +30,7 @@ def main(args, pcap_file):
         CTCore.update_captipper()
 
     CTCore.pcap_file = pcap_file[0]
-    print("[A] Analyzing PCAP: " + CTCore.pcap_file)
+    print(("[A] Analyzing PCAP: " + CTCore.pcap_file))
 
     start_ws = args.server_off # Boolean to start web server
     CTCore.PORT = args.port # Web server port
@@ -45,13 +45,13 @@ def main(args, pcap_file):
     if not CTCore.conversations:
         sys.exit("No HTTP conversations were found in PCAP file")
 
-    print(CTCore.newLine + "[+] Traffic Activity Time: "),
+    print((CTCore.newLine + "[+] Traffic Activity Time: "), end=' ')
     try:
-        print(CTCore.activity_date_time)
+        print((CTCore.activity_date_time))
     except:
-        print "Couldn't retrieve time"
+        print("Couldn't retrieve time")
 
-    print("[+] Conversations Found:" + CTCore.newLine)
+    print(("[+] Conversations Found:" + CTCore.newLine))
     CTCore.show_conversations()
 
     if (start_ws and args.dump is None and args.report is None):
@@ -60,23 +60,23 @@ def main(args, pcap_file):
             CTCore.web_server.start()
             time.sleep(0.1) # Fixes graphic issues
             CTCore.web_server_turned_on = True
-        except Exception,e:
+        except Exception as e:
             CTCore.alert_message("Error starting Web Server:", CTCore.msg_type.ERROR)
 
             if str(e).find("Errno 1004") > 0 or str(e).find("Errno 98") > 0:
-                print " Port " + str(CTCore.PORT) + " is already taken."
-                print " Change the port using 'CapTipper.py <pcap_file> -p <port=80>' or use '-s' to disable web server"
-                print " Proceeding without starting the web server..." + CTCore.newLine
+                print(" Port " + str(CTCore.PORT) + " is already taken.")
+                print(" Change the port using 'CapTipper.py <pcap_file> -p <port=80>' or use '-s' to disable web server")
+                print(" Proceeding without starting the web server..." + CTCore.newLine)
             else:
-                print " " + str(e)
+                print(" " + str(e))
 
     # If chosen just to dump files and exit
     if (args.dump is not None):
         try:
             CTCore.ungzip_all()
             CTCore.dump_all_files(args.dump[0],True)
-        except Exception, ed:
-            print ed
+        except Exception as ed:
+            print(ed)
     # If chosen to create a report
     elif (args.report is not None):
         report = Report(CTCore.hosts, CTCore.conversations, CTCore.VERSION + " b" + CTCore.BUILD)
@@ -88,13 +88,13 @@ def main(args, pcap_file):
             interpreter = console()
             interpreter.cmdloop()
         except:
-            print (CTCore.newLine + 'Exiting CapTipper')
+            print((CTCore.newLine + 'Exiting CapTipper'))
             if (CTCore.web_server_turned_on):
                 CTCore.web_server.shutdown()
 
 if __name__ == "__main__":
     try:
-        print CTCore.ABOUT
+        print(CTCore.ABOUT)
         colorama.init()
 
         parser = argparse.ArgumentParser(usage=CTCore.USAGE, add_help=False)
@@ -115,7 +115,7 @@ if __name__ == "__main__":
             main(args, pcap_file)
 
     except (KeyboardInterrupt, EOFError):
-        print (CTCore.newLine + 'Exiting CapTipper')
-    except Exception,e:
-        print str(e)
+        print((CTCore.newLine + 'Exiting CapTipper'))
+    except Exception as e:
+        print(str(e))
 

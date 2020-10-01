@@ -20,8 +20,8 @@ class check_host(ConsolePlugin):
                 ip, port = self.conversations[id].server_ip_port.split(":")
 
                 # Logging
-                print "Checking host {}".format(host)
-                print "IP:PORT = {}:{}".format(ip,port)
+                print("Checking host {}".format(host))
+                print("IP:PORT = {}:{}".format(ip,port))
 
                 # Establishing connection
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -34,6 +34,6 @@ class check_host(ConsolePlugin):
 
                 return result
             else:
-                print "Invalid conversation ID {}".format(str(id))
+                print("Invalid conversation ID {}".format(str(id)))
         else:
             return "No arguments given"

@@ -35,19 +35,19 @@ def validate_ip(ip):
     if re.match(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",ip) != None:
         return True
     else:
-        print "The ip address you provides is invalid %s exiting" % (ip)
+        print("The ip address you provides is invalid %s exiting" % (ip))
         sys.exit(-1)
 
 
 (options, args) = parser.parse_args()
 if options == []:
-   print parser.print_help()
+   print(parser.print_help())
    sys.exit(-1)
 if not options.input_target or options.input_target == "":
-   print parser.print_help()
+   print(parser.print_help())
    sys.exit(-1)
 if not options.output_pcap or options.output_pcap == "":
-   print parser.print_help()
+   print(parser.print_help())
    sys.exit(-1)
 if options.srcip and validate_ip(options.srcip):
    src = options.srcip 
@@ -113,23 +113,23 @@ if options.input_is_saz and os.path.isfile(options.input_target):
     try:
         options.tmpdir = tempfile.mkdtemp()
     except:
-        print "failed to create temp directory for saz extraction"
+        print("failed to create temp directory for saz extraction")
         sys.exit(-1)
     try:
         z = zipfile.ZipFile(options.input_target,"r")
     except:
-        print "failed to open saz file %s" % (options.input_target)
+        print("failed to open saz file %s" % (options.input_target))
         sys.exit(-1)
     try:
        z.extractall(options.tmpdir)
        z.close()
     except:
-       print "failed to extract saz file %s to %s" % (options.input_target, options.tmpdir)
+       print("failed to extract saz file %s to %s" % (options.input_target, options.tmpdir))
        sys.exit(-1)
     if os.path.isdir("%s/raw/" % (options.tmpdir)):
        options.fiddler_raw_dir = "%s/raw/" % (options.tmpdir)
     else:
-       print "failed to find raw directory in extracted files %s/raw (must remove tmp file yourself)" % (options.tmpdir)
+       print("failed to find raw directory in extracted files %s/raw (must remove tmp file yourself)" % (options.tmpdir))
        sys.exit(-1)
     
 elif os.path.isdir(options.input_target):
@@ -168,7 +168,7 @@ if os.path.isdir(options.fiddler_raw_dir):
             if m.group("dport") and int(m.group("dport")) <= 65535:
                 dport = int(m.group("dport"))
         resp = open(options.fiddler_raw_dir + fid + "_s.txt").read()
-        print "src: %s dst: %s sport: %s dport: %s" % (src, dst, sport, dport)
+        print("src: %s dst: %s sport: %s dport: %s" % (src, dst, sport, dport))
         (seq,ack)=build_handshake(src,dst,sport,dport)
         (seq,ack)=make_poop(src,dst,sport,dport,seq,ack,req)
         (seq,ack)=make_poop(dst,src,dport,sport,seq,ack,resp)
@@ -178,9 +178,9 @@ if os.path.isdir(options.fiddler_raw_dir):
         try:
             shutil.rmtree(options.tmpdir)
         except:
-            print "failed to clean up tmpdir %s you will have to do it" % (options.tmpdir)
+            print("failed to clean up tmpdir %s you will have to do it" % (options.tmpdir))
 else:
-    print "fiddler raw dir specified:%s dos not exist" % (options.fiddler_raw_dir)
+    print("fiddler raw dir specified:%s dos not exist" % (options.fiddler_raw_dir))
     sys.exit(-1)
 
 pktdump.close()

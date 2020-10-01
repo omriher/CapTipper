@@ -2,7 +2,7 @@
 # see
 # http://www.winpcap.org/ntar/draft/PCAP-DumpFileFormat.html
 # http://wiki.wireshark.org/Development/PcapNg
-from __future__ import unicode_literals, print_function, division
+
 import struct
 import sys
 from pcapparser.constant import *
@@ -114,7 +114,7 @@ class PcapngFile(object):
         buf = self.infile.read(8)
         h, l, = struct.unpack(self.section_info.byteorder + b'II', buf)
         timestamp = (h << 32) + l
-        micro_second = long(timestamp * self.section_info.tsresol + self.section_info.tsoffset)
+        micro_second = int(timestamp * self.section_info.tsresol + self.section_info.tsoffset)
 
         # capture len
         buf = self.infile.read(8)

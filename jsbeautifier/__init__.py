@@ -199,7 +199,7 @@ class Beautifier:
 
 
         if self.opts.brace_style not in ['expand', 'collapse', 'end-expand']:
-            raise(Exception('opts.brace_style must be "expand", "collapse" or "end-expand".'))
+            raise Exception
 
         self.blank_state()
 
@@ -246,7 +246,7 @@ class Beautifier:
         try:
             return unpackers.run(source, evalcode)
         except unpackers.UnpackingError as error:
-            print('error:', error)
+            print(('error:', error))
             return ''
 
     def trim_output(self, eat_newlines = False):
@@ -1120,7 +1120,7 @@ def main():
         return usage()
     else:
         if outfile == 'stdout':
-            print(beautify_file(file, js_options))
+            print((beautify_file(file, js_options)))
         else:
             f = open(outfile, 'w')
             f.write(beautify_file(file, js_options) + '\n')

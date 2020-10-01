@@ -1,16 +1,17 @@
 # Changes made to integrate with CapTipper in lines: 176-177,198-191,223-227,236,261-262,329,341-346
 
-from __future__ import unicode_literals, print_function, division
+
 
 import threading
 from collections import defaultdict
-from Queue import Queue
+from queue import Queue
 import CTCore
 
 from pcapparser import utils
 from pcapparser.constant import HttpType, Compress
 from pcapparser.reader import DataReader
 from pcapparser import config
+import traceback
 
 
 __author__ = 'dongliu'
@@ -131,8 +132,9 @@ class HttpParser(object):
                     self.read_request(reader, message, m_time)
                 elif httptype == HttpType.RESPONSE:
                     self.read_response(reader, message)
-            except Exception:
-                #import traceback
+            except Exception as e:
+                #print(e)
+
 
                 #traceback.print_exc()
                 # consume all data.
@@ -190,23 +192,23 @@ class HttpParser(object):
         header_dict = self.read_headers(reader, lines)
 
         # In case proxy was used
-        if req_header.uri.find("http://") == 0:
+        if req_header.uri.find(b"http://") == 0:
             req_header.uri = req_header.uri[len("http://") + len(header_dict[b"host"]):]
 
-        for key in header_dict.iterkeys():
-            CTCore.client.add_header(key, header_dict[key])
+        for key in header_dict.keys():
+            CTCore.client.add_header(key.decode(), header_dict[key])
 
         if b"content-length" in header_dict:
             req_header.content_len = int(header_dict[b"content-length"])
-        if b'chunked' in header_dict[b"transfer-encoding"]:
+        if "chunked" in header_dict[b"transfer-encoding"]:
             req_header.chunked = True
         req_header.content_type = header_dict[b'content-type']
         req_header.compress = utils.get_compress_type(header_dict[b"content-encoding"])
         req_header.host = header_dict[b"host"]
-        if b'expect' in header_dict:
+        if b"expect" in header_dict:
             req_header.expect = header_dict[b'expect']
 
-        req_header.referer = ""
+        req_header.referer = b""
         if b"referer" in header_dict:
             req_header.referer = header_dict[b'referer']
 
@@ -235,7 +237,13 @@ class HttpParser(object):
             resp_header.content_len = int(header_dict[b"content-length"])
         if b"location" in header_dict:
             resp_header.redirect_to = header_dict[b"location"]
-        if b'chunked' in header_dict[b"transfer-encoding"]:
+
+        transfer_encoding = header_dict[b"transfer-encoding"]
+        try:
+            transfer_encoding = header_dict[b"transfer-encoding"].decode()
+        except (UnicodeDecodeError, AttributeError):
+            pass
+        if "chunked" in transfer_encoding:
             resp_header.chunked = True
         resp_header.content_type = header_dict[b'content-type']
         resp_header.compress == utils.get_compress_type(header_dict[b"content-encoding"])
@@ -245,8 +253,8 @@ class HttpParser(object):
         resp_header.filename = ""
         if b"content-disposition" in header_dict:
             cnt_dis = header_dict[b'content-disposition']
-            if cnt_dis.find("filename=") > -1:
-                resp_header.filename = cnt_dis.split('=')[1].rstrip()
+            if cnt_dis.find(b"filename=") > -1:
+                resp_header.filename = cnt_dis.split(b'=')[1].rstrip()
 
         return resp_header
 
@@ -261,7 +269,8 @@ class HttpParser(object):
             if cline is None:
                 # error occurred.
                 if not skip:
-                    return b''.join(result)
+                    #return b''.join(result)
+                    return b''.join(result), b''.join(orig_chunked_resp)
                 else:
                     return
             chunk_size_end = cline.find(b';')

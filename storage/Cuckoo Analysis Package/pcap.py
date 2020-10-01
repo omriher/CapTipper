@@ -89,7 +89,7 @@ class Pcap(Package):
         #Update hosts file with all hosts found in pcap
         #add each ip directly accessed in pcap to loopback network card
         ip_pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-        host_domains = CTCore.hosts.keys()
+        host_domains = list(CTCore.hosts.keys())
         if host_domains:
             #self.PATHS = Pcap.HOSTS_PATHS
             with open(self.hosts_path, "a+") as hosts_file:
@@ -123,7 +123,7 @@ class Pcap(Package):
             log.info("iexplore: "+iexplore)
             log.info("url: "+open_url)
             return self.execute(iexplore, args=["%s" % open_url])
-        except Exception,e:
+        except Exception as e:
             log.error("Error starting Web Server: %s", str(CTCore.msg_type.ERROR))
 
             if str(e).find("Errno 1004") > 0 or str(e).find("Errno 98") > 0:

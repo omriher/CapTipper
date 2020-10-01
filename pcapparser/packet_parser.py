@@ -1,10 +1,13 @@
 # Changes made to integrate with CapTipper in lines: 18,30,101,115,120,123,126,131,172
-from __future__ import unicode_literals, print_function, division
+
 
 __author__ = 'dongliu'
 
+import logging
 import struct
 import socket
+import traceback
+
 from pcapparser.constant import *
 
 
@@ -99,7 +102,7 @@ def read_ip_pac(link_packet, link_layer_parser):
     n_protocol, ip_packet = link_layer_parser(link_packet)
 
     if n_protocol == NetworkProtocol.IP or n_protocol == NetworkProtocol.PPP_IP:
-        src_mac = ":".join("{:02x}".format(ord(c)) for c in link_packet[6:12])
+        src_mac = ":".join("{:02x}".format(c) for c in link_packet[6:12])
         ip_base_header_len = 20
         ip_header = ip_packet[0:ip_base_header_len]
         (ip_info, ip_length, protocol) = struct.unpack(b'!BxH5xB10x', ip_header)
@@ -156,7 +159,7 @@ def read_tcp_pac(link_packet, link_layer_parser):
     if 0 < len(body) < 20:
         total = 0
         for ch in body:
-            total += ord(ch)
+            total += ch
         if total == 0:
             body = b''
 
@@ -195,8 +198,9 @@ def read_tcp_packet(read_packet):
                 continue
             else:
                 continue
-        except:
-            pass
+        except Exception as e:
+            print(e)
+            logging.error(logging.traceback.format_exc())
 
 
 def read_package_r(pcap_file):

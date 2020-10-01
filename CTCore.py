@@ -11,15 +11,16 @@
 
 
 from collections import namedtuple
-import StringIO
+import io
 import json
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import os
 import collections
-import urlparse
+import urllib.parse
 import gzip
 import re
+import traceback
 import sys
 import zipfile
 
@@ -35,7 +36,7 @@ plugins = []
 plugins_folder = "plugins/"
 pcap_file = ""
 VERSION = "0.3"
-BUILD = "13"
+BUILD = "14"
 ABOUT = "CapTipper v" + VERSION + " b" + BUILD + " - Malicious HTTP traffic explorer tool" + newLine + \
         "Copyright 2015 Omri Herscovici <omriher@gmail.com>" + newLine
 
@@ -78,7 +79,7 @@ VT_APIKEY = ""
 
 try:
     WhatypeMagic = Whatype(os.path.join(os.path.dirname(os.path.realpath(__file__)),"magics.csv"))
-except Exception, e:
+except Exception as e:
     Errors.append("Couldn't load Whatype for magic identification: " + e.message)
 
 class client_struct:
@@ -91,7 +92,7 @@ class client_struct:
                                'IF-MODIFIED-SINCE','IF-NONE-MATCH','ORIGIN','ACCEPT-ASTEROPE','IF-UNMODIFIED-SINCE']
 
     def add_header(self, key, value):
-        if not self.headers.has_key(key.upper()) and not key.upper() in self.ignore_headers:
+        if key.upper() not in self.headers and not key.upper() in self.ignore_headers:
             self.headers[key.upper()] = value
 
     def get_information(self):
@@ -106,13 +107,13 @@ def alert_message(text, type):
         message = colors.YELLOW + "[!] " + colors.END
 
     message += text
-    print message
+    print(message)
 
 def show_errors():
     global Errors
     if len(Errors) > 0:
         for err in Errors:
-            print err
+            print(err)
 
 def check_errors():
     global Errors
@@ -157,8 +158,8 @@ def get_name(id):
         return name
 
 def show_hosts():
-    for host, ip in hosts.keys():
-        print " " + host + " ({})".format(ip)
+    for host, ip in list(hosts.keys()):
+        print(" " + host.decode() + " ({})".format(ip))
         hostkey = (host, ip)
         for host_uri,obj_num in hosts[hostkey]:
             #chr_num = 195 # Extended ASCII tree symbol
@@ -170,11 +171,11 @@ def show_hosts():
                 chr_num = 9492 # UNICODE tree symbol
 
             try:
-                print " " + unichr(chr_num) + "-- " + host_uri.encode('utf8') + "   [{}]".format(obj_num)
+                print(" " + chr(chr_num) + "-- " + host_uri.decode() + "   [{}]".format(obj_num))
             except:
-                print " |-- " + host_uri.encode('utf8') + "   [{}]".format(obj_num)
+                print(" |-- " + host_uri.decode() + "   [{}]".format(obj_num))
 
-        print newLine
+        print(newLine)
 
 def check_duplicate_url(host, uri):
     bDup = False
@@ -211,7 +212,7 @@ SHORT_URI_SIZE = 20
 def getShortURI(uri):
     shortURL = uri
     if len(uri) > SHORT_URI_SIZE:
-        shortURL = uri[0:int(SHORT_URI_SIZE/2)] + "..." + uri[len(uri)-int(SHORT_URI_SIZE/2):len(uri)]
+        shortURL = uri[0:int(SHORT_URI_SIZE/2)] + b"..." + uri[len(uri)-int(SHORT_URI_SIZE/2):len(uri)]
     return shortURL
 
 def byTime(Conv):
@@ -222,11 +223,14 @@ def sort_convs():
     for cnt, conv in enumerate(conversations):
         conv.id = cnt
         add_object("body", conv.res_body)
-        objects[cnt].name = conv.filename
+        if not isinstance(conv.filename, str):
+            objects[cnt].name = conv.filename.decode()
+        else:
+            objects[cnt].name = conv.filename
 
         # Populating hosts list
         host_tuple = (conv.host, conv.server_ip_port)
-        if (hosts.has_key(host_tuple)):
+        if (host_tuple in hosts):
             hosts[host_tuple].append((conv.uri,str(cnt)))
         else:
             hosts[host_tuple] = [(conv.uri,str(cnt))]
@@ -266,8 +270,9 @@ def finish_conversation(self):
             mgc_name = ""
             mgc_ext = ""
             mgc_name, mgc_ext = WhatypeMagic.identify_buffer(self.res_body)
-        except:
-            pass
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
 
         conversations[obj_num].magic_name = mgc_name.rstrip()
         conversations[obj_num].magic_ext = mgc_ext.rstrip()
@@ -277,8 +282,8 @@ def finish_conversation(self):
         conversations[obj_num].res_head = self.res_head
         conversations[obj_num].res_num = self.res_num
 
-        if ";" in self.res_type:
-            conversations[obj_num].res_type = self.res_type[:self.res_type.find(";")]
+        if b";" in self.res_type:
+            conversations[obj_num].res_type = self.res_type[:self.res_type.find(b";")]
         else:
             conversations[obj_num].res_type = self.res_type
 
@@ -291,7 +296,7 @@ def finish_conversation(self):
 
         # In case no filename was given from the server, split by URI
         if (conversations[obj_num].filename == ""):
-            uri_name = urlparse.urlsplit(str(conversations[obj_num].uri)).path
+            uri_name = urllib.parse.urlsplit(conversations[obj_num].uri.decode()).path
             conversations[obj_num].filename = uri_name.split('/')[-1]
 
             if (str(conversations[obj_num].filename).find('?') > 0):
@@ -316,54 +321,107 @@ def show_conversations():
     for cnt, conv in enumerate(conversations):
         try:
             typecolor = colors.END
-            if ("pdf" in conv.res_type):
+            if (b"pdf" in conv.res_type):
                 typecolor = colors.RED
-            elif ("javascript" in conv.res_type):
+            elif (b"javascript" in conv.res_type):
                 typecolor = colors.BLUE
-            elif ("octet-stream" in conv.res_type) or ("application" in conv.res_type):
+            elif (b"octet-stream" in conv.res_type) or (b"application" in conv.res_type):
                 typecolor = colors.YELLOW
-            elif ("image" in conv.res_type):
+            elif (b"image" in conv.res_type):
                 typecolor = colors.GREEN
 
-            print str(conv.id) + ": " + colors.PINK,
+            print(str(conv.id) + ": " + colors.PINK, end=' ')
             if (b_use_short_uri):
-                print conv.short_uri,
+                print(conv.short_uri.decode(), end=' ')
             else:
-                print conv.uri,
-            print colors.END + " -> " + conv.res_type,
-            if (conv.filename != ""):
-                print typecolor + "(" + conv.filename.rstrip() + ")" + colors.END + " [" + str(fmt_size(conv.res_len)) + "]",
+                print(conv.uri.decode(), end=' ')
+            print(colors.END + " -> " + conv.res_type.decode(), end=' ')
+            if (conv.filename != b""):
+                try:
+                    fname = conv.filename.decode()
+                except:
+                    fname = conv.filename
+                print(typecolor + "(" + fname.rstrip() + ")" + colors.END + " [" + str(fmt_size(conv.res_len)) + "]", end=' ')
 
                 # If magic found
                 if conv.magic_ext != "":
-                    print " (Magic: " + colors.STRONG_BRIGHT + "{}".format(conv.magic_ext) + colors.NORMAL_BRIGHT + ")"
+                    print(" (Magic: " + colors.STRONG_BRIGHT + "{}".format(conv.magic_ext) + colors.NORMAL_BRIGHT + ")")
                 else:
-                    print ""
+                    print("")
             else:
-                print newLine
-        except:
+                print(newLine)
+        except Exception as e:
+            print(e)
+
+
+            traceback.print_exc()
             pass
-    print ""
+    print("")
 
 def show_objects():
-    print "Displaying Objects:" + newLine
-    print " ID   CID     TYPE          NAME"
-    print "---- -----  -----------   --------"
+    print("Displaying Objects:" + newLine)
+    print(" ID   CID     TYPE          NAME")
+    print("---- -----  -----------   --------")
 
     for id, obj in enumerate(objects):
-        print "{0:3} | {1:3} | {2:11} | {3}".format(id, obj.conv_id, obj.type, obj.name)
+        print("{0:3} | {1:3} | {2:11} | {3}".format(id, obj.conv_id, obj.type, obj.name))
 
-def hexdump(src, length=16):
-    result = []
-    digits = 4 if isinstance(src, unicode) else 2
+# Python3 FIXXXX
+def hexdump(src, length=16, sep='.'):
+    '''
+    	@brief Return {src} in hex dump.
+    	@param[in] length	{Int} Nb Bytes by row.
+    	@param[in] sep		{Char} For the text part, {sep} will be used for non ASCII char.
+    	@return {Str} The hexdump
+    	@note Full support for python2 and python3 !
+    	'''
+    result = [];
+
+    # Python3 support
+    try:
+        xrange(0, 1)
+    except NameError:
+        xrange = range
+
     for i in xrange(0, len(src), length):
+        subSrc = src[i:i + length]
+        hexa = ''
+        isMiddle = False
+        for h in xrange(0, len(subSrc)):
+            if h == length / 2:
+                hexa += ' '
+            h = subSrc[h]
+            if not isinstance(h, int):
+                h = ord(h)
+            h = hex(h).replace('0x', '')
+            if len(h) == 1:
+                h = '0' + h
+            hexa += h + ' '
+        hexa = hexa.strip(' ')
+        text = ''
+        for c in subSrc:
+            if not isinstance(c, int):
+                c = ord(c)
+            if 0x20 <= c < 0x7F:
+                text += chr(c)
+            else:
+                text += sep
+        result.append(('%08X:  %-' + str(length * (2 + 1) + 1) + 's  |%s|') % (i, hexa, text))
+
+    return '\n'.join(result)
+    """
+    Removed due Transition to Python3
+    result = []
+    digits = 4 if isinstance(src, str) else 2
+    for i in range(0, len(src), length):
         s = src[i:i + length]
-        hexa = b' '.join(["%0*X" % (digits, ord(x)) for x in s])
-        text = b''.join([x if 0x20 <= ord(x) < 0x7F else b'.' for x in s])
+        hexa = b' '.join([b"%0*X" % (digits, (x)) for x in s])
+        text = b''.join([x if 0x20 <= (x) < 0x7F else b'.' for x in s])
         result.append(b"%04X   %-*s   %s" % (i, length * (digits + 1), hexa, text))
+    """
     return b'\n'.join(result)
 
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 class srcHTMLParser(HTMLParser):
     def __init__(self, find_tag):
@@ -379,14 +437,18 @@ class srcHTMLParser(HTMLParser):
 
     def print_objects(self):
         if len(self.tags) > 0:
-            print " " + str(len(self.tags)) + " {}(s) Found!".format(self.find_tag) + newLine
+            print(" " + str(len(self.tags)) + " {}(s) Found!".format(self.find_tag) + newLine)
 
             for cnt, curr_tag in enumerate(self.tags):
-                print " [I] " + str(cnt + 1) + " : " + curr_tag
+                print(" [I] " + str(cnt + 1) + " : " + curr_tag)
         else:
-            print "     No {} Found".format(self.find_tag)
+            print("     No {} Found".format(self.find_tag))
 
 def update_captipper():
+    print("Update function is deprecated, please use `git pull`")
+    return
+
+    # Old GitHub
     currentVersion = "v{} b{}".format(VERSION,BUILD)
     rawURL = "https://raw.githubusercontent.com/omriher/CapTipper/master/"
     archiveURL = "https://github.com/omriher/CapTipper/archive/"
@@ -394,10 +456,10 @@ def update_captipper():
     CTArchive = "master.zip"
 
     CoreURL = rawURL + CoreFile
-    print "Checking for updates (Current version: {})".format(currentVersion)
+    print("Checking for updates (Current version: {})".format(currentVersion))
     try:
-        print "Connecting to CapTipper Repository"
-        coreRepFile = urllib2.urlopen(CoreURL).read()
+        print("Connecting to CapTipper Repository")
+        coreRepFile = urllib.request.urlopen(CoreURL).read()
     except:
         sys.exit("[-] Error connecting to CapTipper repository")
 
@@ -411,20 +473,20 @@ def update_captipper():
     if newVersion == currentVersion:
          sys.exit("[+] You have the newest version!")
     else:
-        print "[+] Updating CapTipper to {}".format(newVersion)
+        print("[+] Updating CapTipper to {}".format(newVersion))
         bPackSize = False
         nAttempts = 0
         while (not bPackSize and nAttempts < 3):
             try:
                 url = archiveURL + CTArchive
-                u = urllib2.urlopen(url)
+                u = urllib.request.urlopen(url)
                 content_length = u.info().getheaders("content-length")
                 if len(content_length) > 0:
                     file_size = int(content_length[0])
                     bPackSize = True
                 else:
-                    print("[-] Couldn't get package size, Retrying ({} / 3)...".format(str(nAttempts)))
-            except Exception,e:
+                    print(("[-] Couldn't get package size, Retrying ({} / 3)...".format(str(nAttempts))))
+            except Exception as e:
                 sys.exit("[-] Error downloading update: {}".format(e.message))
             finally:
                 nAttempts += 1
@@ -448,10 +510,10 @@ def update_captipper():
                 sys.stdout.flush()
             f.close()
             CapTipper_Folder = os.path.dirname(os.path.realpath(__file__))
-        except Exception, e:
-            print "[-] Error downloading file: {}".format(e.message)
+        except Exception as e:
+            print("[-] Error downloading file: {}".format(e.message))
 
-        print "\nExtracting Files..."
+        print("\nExtracting Files...")
         try:
             z = zipfile.ZipFile('CapTipper-package.zip')
             master_folder = ""
@@ -467,15 +529,15 @@ def update_captipper():
                     if os.name == 'nt':
                         full_path = full_path.replace("/",r"\\")
 
-                    print "Extracting {}".format(full_path)
+                    print("Extracting {}".format(full_path))
                     with open(full_path,"wb") as out:
                         out.write(z.read(name))
             try:
                 os.remove("CapTipper-package.zip")
-            except Exception, ed:
-                print "Failed deleting CapTipper-package.zip : " + ed.message
-            print "Update Complete! (New version: {})".format(newVersion)
-        except Exception,e:
+            except Exception as ed:
+                print("Failed deleting CapTipper-package.zip : " + ed.message)
+            print("Update Complete! (New version: {})".format(newVersion))
+        except Exception as e:
             sys.exit("Failed extracting files: {}".format(e.message))
     sys.exit("Finished updating CapTipper")
 
@@ -486,9 +548,9 @@ def send_to_vt(md5, key_vt):
     url_vt = 'https://www.virustotal.com/vtapi/v2/file/report'
     params = {'resource':md5,'apikey':key_vt}
     try:
-        body = urllib.urlencode(params)
-        req = urllib2.Request(url_vt, body)
-        res = urllib2.urlopen(req)
+        body = urllib.parse.urlencode(params)
+        req = urllib.request.Request(url_vt, body)
+        res = urllib.request.urlopen(req)
         res_json = res.read()
     except:
         return (-1, 'Request to VirusTotal Failed')
@@ -499,8 +561,13 @@ def send_to_vt(md5, key_vt):
     return (0, json_dict)
 
 def get_strings(content):
+    if not isinstance(content,str):
+        content = content.decode('utf-8', 'ignore')
     strings = re.findall("[\x1f-\x7e]{5,}", content)
-    strings += [str(ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){5,}", content)]
+    #strings += [str(ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){5,}", content)]
+    #strings += [str(ws) for ws in re.findall("(?:[\x1f-\x7e][\x00]){5,}", content)]
+    strings += [str(ws) for ws in re.findall("[^\x00-\x1F\x7F-\xFF]{4,}", content)]
+
     return strings
 
 def get_request_size(id, size, full_request=False):
@@ -532,11 +599,12 @@ def get_response_and_size(id, size, full_response=False):
     else:
         body = objects[int(id)].value
 
-    if not (isinstance(body, basestring)):
+    """
+    if not (isinstance(body, str)):
         comp_header = conversations[int(id)].res_head
-        test_res = conversations[int(id)].res_head + "\r\n\r\n" + conversations[int(id)].orig_chunked_resp
+        test_res = conversations[int(id)].res_head + b"\r\n\r\n" + conversations[int(id)].orig_chunked_resp
         body = ""
-        if (comp_header + "\r\n\r\n" == test_res):
+        if (comp_header + b"\r\n\r\n" == test_res):
             #print colors.RED + newLine + "[E] Object: {} ({}) : Response body was empty, showing header instead".format(id, CTCore.objects[int(id)].name) + colors.END + newLine
             Errors.append(colors.RED + newLine + "[E] Object: {} ({}) : Response body was empty".format(id, objects[int(id)].name) + colors.END + newLine)
         else:
@@ -545,10 +613,15 @@ def get_response_and_size(id, size, full_response=False):
 
         if (size != "all"):
             size = size * 2
+    """
 
     if (size == "all"):
-        response = body
-        size = len(response)
+        if body == None:
+            response = ""
+            size = 0
+        else:
+            response = body
+            size = len(response)
     else:
         size = int(size)
         response = body[0:size]
@@ -560,17 +633,17 @@ def get_response_and_size(id, size, full_response=False):
 def ungzip_all():
     for conv in conversations:
         try:
-            if conv.res_head.lower().find("gzip") > -1:
+            if conv.res_head.lower().find(b"gzip") > -1:
                 name = ""
                 try:
                     id = int(conv.id)
                     name = get_name(id)
                     obj_num, name = ungzip_and_add(id)
                     if obj_num != -1:
-                        print " GZIP Decompression of object {} ({}) successful!".format(str(id), name)
-                        print " New object created: {}".format(obj_num) + newLine
-                except Exception, e:
-                    print "Error in: {} - {}".format(name,str(e))
+                        print(" GZIP Decompression of object {} ({}) successful!".format(str(id), name))
+                        print(" New object created: {}".format(obj_num) + newLine)
+                except Exception as e:
+                    print("Error in: {} - {}".format(name,str(e)))
         except:
             pass
 
@@ -578,10 +651,13 @@ def ungzip(id):
     body, sz = get_response_and_size(id, "all")
     obj_num = -1
     name = ""
+    if body == "":
+        return "", -1
     if not check_errors():
         name = get_name(id)
-        decomp = gzip.GzipFile('', 'rb', 9, StringIO.StringIO(body))
-        page = decomp.read()
+        #decomp = gzip.GzipFile('', 'rb', 9, body)
+        #page = decomp.read()
+        page = gzip.decompress(body)
 
     return page, name
 
@@ -591,23 +667,32 @@ def ungzip_and_add(id):
     return obj_num, name
 
 def dump_all_files(path, dump_exe):
+    if not os.path.isdir(path):
+        os.makedirs(path)
+
     for i in range(0,len(objects)):
         try:
-            if (not objects[i].name.lower().endswith(".exe")) or dump_exe:
-                dump_file(i, os.path.join(path, str(i) + "-" + objects[i].name))
-        except Exception, ef:
-            print str(ef)
+            fname = objects[i].name
+            if not isinstance(fname, str):
+                fname = objects[i].name.decode()
+
+            if (not fname.lower().endswith(".exe")) or dump_exe:
+                dump_file(i, os.path.join(path, str(i) + "-" + fname))
+        except Exception as ef:
+            print(str(ef))
 
 def dump_file(id, path):
     id = int(id)
     body, sz = get_response_and_size(id, "all")
 
     show_errors()
+    if not os.path.isdir(path):
+        os.makedirs(path)
 
     f = open(path, "wb")
     f.write(body)
     f.close()
-    print " Object {} written to {}".format(id, path)
+    print(" Object {} written to {}".format(id, path))
 
 def find_plugin(name):
     for plug in plugins:
@@ -624,5 +709,5 @@ def run_plugin(name, *args):
             return result
         else:
             return "Plugin " + name + " Does not exist"
-    except Exception,e:
-        print str(e)
+    except Exception as e:
+        print(str(e))

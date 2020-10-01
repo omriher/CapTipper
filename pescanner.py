@@ -36,12 +36,12 @@ import time
 import binascii
 import string
 import os, sys
-import commands
+import subprocess
 
 try:
     import pefile
     import peutils
-except ImportError:
+except ImportError as e:
     #print 'pefile not installed, see http://code.google.com/p/pefile/'
     #sys.exit()
     pass
@@ -85,7 +85,7 @@ def get_filetype(data):
     """There are two versions of python-magic floating around, and annoyingly, the interface 
     changed between versions, so we try one method and if it fails, then we try the other.
     NOTE: you may need to alter the magic_file for your system to point to the magic file."""
-    if sys.modules.has_key('magic'):
+    if 'magic' in sys.modules:
         try:
             ms = magic.open(magic.MAGIC_NONE) 
             ms.load() 
@@ -121,7 +121,7 @@ class PEScanner:
         self.pedata = data
         
         # initialize YARA rules if provided 
-        if yara_rules and sys.modules.has_key('yara'):
+        if yara_rules and 'yara' in sys.modules:
             self.rules = yara.compile(yara_rules)
         else:
             self.rules = None
@@ -155,12 +155,12 @@ class PEScanner:
                 for entry in pe.FileInfo:
                     if hasattr(entry, 'StringTable'):
                         for st_entry in entry.StringTable:
-                            for str_entry in st_entry.entries.items():
+                            for str_entry in list(st_entry.entries.items()):
                                 ret.append(convert_to_printable(str_entry[0]) + ': ' + convert_to_printable(str_entry[1]) )
                     elif hasattr(entry, 'Var'):
                         for var_entry in entry.Var:
                             if hasattr(var_entry, 'entry'):
-                                ret.append(convert_to_printable(var_entry.entry.keys()[0]) + ': ' + var_entry.entry.values()[0])
+                                ret.append(convert_to_printable(list(var_entry.entry.keys())[0]) + ': ' + list(var_entry.entry.values())[0])
         return '\n'.join(ret)
 
     def check_tls(self, pe):
@@ -258,7 +258,7 @@ class PEScanner:
 
     def check_clam(self, file):
         if os.path.isfile(clamscan_path):
-            status, output = commands.getstatusoutput("%s %s" % (clamscan_path, file))
+            status, output = subprocess.getstatusoutput("%s %s" % (clamscan_path, file))
             if status != 0:
                 return "Clamav: %s" % output.split("\n")[0]
         return ''
@@ -286,7 +286,10 @@ class PEScanner:
                 pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_EXPORT'],
                 pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_TLS'],
                 pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_RESOURCE']])
-        except:
+        except Exception as e:
+            #print(e)
+            #import traceback
+            #traceback.print_exc()
             out.append("")
             out.append("    Cannot parse %s (maybe not PE?)" % file)
             out.append("")
@@ -320,7 +323,7 @@ class PEScanner:
         if len(packers):
             out.append("Packers: %s" % ','.join(packers))
 
-        if sys.modules.has_key('yara'):
+        if 'yara' in sys.modules:
             yarahits = self.check_yara(data)
         else:
             yarahits = []
@@ -343,7 +346,7 @@ class PEScanner:
             out.append(self.header("Resource entries"))
             out.append("%-18s %-8s %-8s %-12s %-24s Type" % ("Name", "RVA", "Size", "Lang", "Sublang"))
             out.append("-" * 80)
-            for rsrc in resources.keys():
+            for rsrc in list(resources.keys()):
                 (name,rva,size,type,lang,sublang) = resources[rsrc]
                 out.append("%-18s %-8s %-8s %-12s %-24s %s" % (name, hex(rva), hex(size), lang, sublang, type))
 

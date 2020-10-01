@@ -17,7 +17,7 @@
 #
 # This file and the library itself were modified to integrate with CapTipper
 
-from __future__ import unicode_literals, print_function, division
+
 import signal
 
 import sys
@@ -26,9 +26,7 @@ import time
 import CTCore
 
 major, minor, = sys.version_info[:2]
-if major != 2 or minor < 7:
-    print("Python version 2.7.* needed.", file=sys.stderr)
-    sys.exit(1)
+
 
 import io
 
@@ -186,5 +184,5 @@ def run(file_path):
             CTCore.sort_convs()
             infile.close()
     finally:
-        for conn in conn_dict.values():
+        for conn in list(conn_dict.values()):
             conn.finish()

@@ -14,4 +14,4 @@ class print_body(ConsolePlugin):
             else:
                 data = self.get_body_by_id(id)
         else:
-            print "invalid id"
+            print("invalid id")

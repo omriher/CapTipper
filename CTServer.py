@@ -9,17 +9,18 @@
 #          CapTipper is a free software under the GPLv3 License
 #
 
-import SocketServer
-from BaseHTTPServer import BaseHTTPRequestHandler
-from StringIO import StringIO
+import socketserver
+import traceback
+from http.server import BaseHTTPRequestHandler
+from io import StringIO, BytesIO
 import datetime
-from urlparse import urlparse
+from urllib.parse import urlparse
 from threading import Thread
 import CTCore
 
 class HTTPRequest(BaseHTTPRequestHandler):
     def __init__(self, request_text):
-        self.rfile = StringIO(request_text)
+        self.rfile = BytesIO(request_text)
         self.raw_requestline = self.rfile.readline()
         self.error_code = self.error_message = None
         self.parse_request()
@@ -31,21 +32,21 @@ class HTTPRequest(BaseHTTPRequestHandler):
 class server(Thread):
     def __init__(self):
         super(server, self).__init__()
-        self.srv = SocketServer.ThreadingTCPServer((CTCore.HOST, CTCore.PORT), TCPHandler)
+        self.srv = socketserver.ThreadingTCPServer((CTCore.HOST, CTCore.PORT), TCPHandler)
 
     def run(self):
-        print CTCore.newLine + CTCore.colors.GREEN + "[+]" + CTCore.colors.END + " Started Web Server on http://" + CTCore.HOST + ":" + str(CTCore.PORT)
-        print CTCore.colors.GREEN + "[+]" + CTCore.colors.END + " Listening to requests..." + CTCore.newLine
+        print(CTCore.newLine + CTCore.colors.GREEN + "[+]" + CTCore.colors.END + " Started Web Server on http://" + CTCore.HOST + ":" + str(CTCore.PORT))
+        print(CTCore.colors.GREEN + "[+]" + CTCore.colors.END + " Listening to requests..." + CTCore.newLine)
         self.srv.serve_forever()
 
     def shutdown(self):
         if (CTCore.web_server_turned_on):
             self.srv.shutdown()
             self.srv.server_close()
-            print "WebServer Shutdown."
+            print("WebServer Shutdown.")
             CTCore.web_server_turned_on = False
 
-class TCPHandler(SocketServer.BaseRequestHandler):
+class TCPHandler(socketserver.BaseRequestHandler):
 
     def build_index(self):
         index_page = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
@@ -57,8 +58,8 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                         <h1>Index of CapTipper Server</h1>
                         <hr>"""
 
-        for host, ip in CTCore.hosts.keys():
-            index_page += " " + host + " ({})<br>".format(ip)
+        for host, ip in list(CTCore.hosts.keys()):
+            index_page += " " + host.decode('cp437', 'ignore') + " ({})<br>".format(ip)
             hostkey = (host, ip)
             for host_uri,obj_num in CTCore.hosts[hostkey]:
                 #chr_num = 195 # Extended ASCII tree symbol
@@ -70,8 +71,8 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                     chr_num = 9492 # UNICODE tree symbol
 
 
-                index_page += " " + "-- <a href='/{}".format(host) + host_uri.encode('utf8') \
-                              + "'>{}</a><br>\r\n".format(host_uri.encode('utf8') + "     [{}]".format(obj_num))
+                index_page += " " + "-- <a href='/{}".format(host.decode('cp437', 'ignore')) + host_uri.decode('cp437', 'ignore') \
+                              + "'>{}</a><br>\r\n".format(host_uri.decode('cp437', 'ignore') + "     [{}]".format(obj_num))
             index_page += "<br>\r\n"
 
         index_page += "</body></html>"
@@ -104,8 +105,8 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                     break
             get_uri = get_request[get_start:get_end]
             return get_uri
-        except Exception,e:
-            print "[-] Error parsing data: " + self.data + ":" + str(e)
+        except Exception as e:
+            print("[-] Error parsing data: " + self.data + ":" + str(e))
 
     def get_domain_folder(self, get_uri):
         folder = get_uri.split("/")[1]
@@ -125,8 +126,8 @@ class TCPHandler(SocketServer.BaseRequestHandler):
 
                 using_host_folder = False
                 using_host_header = False
-                for chost,ip_port in CTCore.hosts.keys():
-                    if chost.lower() == host_folder.lower():
+                for chost,ip_port in list(CTCore.hosts.keys()):
+                    if chost.decode().lower() == host_folder.lower():
                         req_host = chost
                         using_host_folder = True
                         break
@@ -135,27 +136,31 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                     req_host = request.headers['host']
 
                     #check if host header is in domains list
-                    for chost, ip_port in CTCore.hosts.keys():
+                    for chost, ip_port in list(CTCore.hosts.keys()):
                         if chost.lower() == req_host.lower():
                             req_host = chost
                             using_host_header = True
                             break
 
                     if not using_host_header:
-                        if req_host == "127.0.0.1":
+                        if req_host.split(":")[0] == "127.0.0.1":
                             localhost = "http://127.0.0.1/"
                             try:
                                 # set req_host to be referer
-                                referrer = request.headers['referer']
+                                if request.headers['referer'] is None:
+                                    referrer = ""
+                                else:
+                                    referrer = request.headers['referer']
                                 # if referer isn't 127.0.0.1
                                 if referrer.find(localhost) == 0:
                                     end_of_host = referrer.find("/",len(localhost) + 1)
                                     req_host = referrer[len(localhost):end_of_host]
-                            except:
-                                pass
+                            except Exception as e:
+                                print(e)
+                                traceback.print_exc()
 
                             # set req_host to be the last request
-                            if (len(CTCore.request_logs) > 0) and (request.path.find(req_host) == 1 or req_host == "127.0.0.1"):
+                            if (len(CTCore.request_logs) > 0) and (request.path.find(req_host) == 1 or req_host.split(":")[0] == "127.0.0.1"):
                                 last_req = CTCore.request_logs[-1]
                                 last_url = last_req[last_req.find(' : ') + 3:]
                                 last_req_parsed = urlparse("http://" + last_url)
@@ -179,14 +184,26 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                     req_sent = False
                     for conv in CTCore.conversations:
                         if conv.host == req_host:
-                            if (self.check_request(conv.uri, get_uri) == True):
+                            conv_uri = conv.uri
+                            if not isinstance(conv_uri, str):
+                                conv_uri = conv_uri.decode("utf-8", "ignore")
+
+                            if (self.check_request(conv_uri, get_uri) == True):
                                 resp = conv.res_head
+                                if not isinstance(resp, str):
+                                    resp = resp.decode("utf-8", "ignore")
+
+                                resp = resp.encode()
+
                                 if conv.orig_chunked_resp != "":
-                                    resp = resp + "\r\n\r\n" + conv.orig_chunked_resp
+                                    resp = resp + b"\r\n\r\n" + conv.orig_chunked_resp
                                 else:
-                                    resp = resp + "\r\n\r\n"
+                                    resp = resp + b"\r\n\r\n"
                                     if conv.orig_resp:
-                                        resp += conv.orig_resp
+                                        original_resp = conv.orig_resp
+                                        #if not isinstance(original_resp, str):
+                                        #    original_resp = original_resp.decode("utf-8", "ignore")
+                                        resp += original_resp
 
                                 self.request.send(resp)
                                 req_sent = True
@@ -195,14 +212,23 @@ class TCPHandler(SocketServer.BaseRequestHandler):
 
                     if not req_sent:
                         if get_uri == "/":
-                            self.request.send(self.build_index())
+                            dir_response = b"HTTP/1.1 200 OK\r\n\r\n" + self.build_index().encode()
+                            self.request.send(dir_response)
+                            res = "200 OK [Main Dir]"
                         else:
                             self.request.send("HTTP/1.1 404 Not Found")
                             res = "404 Not Found"
-                except Exception, e:
+                except Exception as e:
                     res = str(e)
                 finally:
+                    if not isinstance(req_host, str):
+                     req_host = req_host.decode("cp437", "ignore")
+                    if not isinstance(get_uri, str):
+                     get_uri = get_uri.decode("cp437", "ignore")
+                    if not isinstance(res, str):
+                     res = res.decode("cp437", "ignore")
                     self.log(req_host + get_uri + " - " + res)
-        except Exception, e:
-            pass
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
             

@@ -13,6 +13,7 @@
 #
 
 import os
+import binascii
 
 class WhatypeErr(Exception):
     def __init__(self, when, error):
@@ -99,14 +100,15 @@ class Whatype(object):
 
     def print_tree(self,Node, index):
         for nd in Node.children:
-            print "--" * index + nd.byte
+            print(("--" * index + nd.byte))
             if (len(nd.children) > 0):
                 self.print_tree(nd, index + 1)
 
     def strings_search(self,strings_list, content):
         bGood = True
         for str in strings_list.split(";"):
-            if content.lower().find(str.lower().rstrip()) == -1:
+            if str.lower().rstrip().encode() not in content.lower():
+            #if content.lower().find(str.lower().rstrip()) == -1:
                 bGood = False
         return bGood
 
@@ -125,27 +127,28 @@ class Whatype(object):
     def istext(self,cont):
         # Based on http://code.activestate.com/recipes/173220/
         import string
-        text_characters = "".join(map(chr, range(32, 127)) + list("\n\r\t\b"))
-        _null_trans = string.maketrans("", "")
+        text_characters = "".join(list(map(chr, list(range(32, 127)))) + list("\n\r\t\b"))
+        _null_trans = str.maketrans("", "")
+
         if not cont:
             # Empty files are considered text
             return True
-        if "\0" in cont:
+        if b"\0" in cont:
             # Files with null bytes are likely binary
             return False
         # Get the non-text characters (maps a character to itself then
         # use the 'remove' option to get rid of the text characters.)
-        t = cont.translate(_null_trans, text_characters)
+            #t = cont.translate(_null_trans, text_characters)
         # If more than 30% non-text characters, then
         # this is considered a binary file
-        if float(len(t))/float(len(cont)) > 0.30:
-            return False
+            #if float(len(t))/float(len(cont)) > 0.30:
+                #return False
         return True
 
     def find(self, cont, Node, index=0, magic_history=[]):
         if cont == "" or cont is None:
             return "",""
-        curr_byte = cont[index].encode('hex')
+        curr_byte = hex(cont[index])[2:].zfill(2)
         NextNode = Node.get_childrens_by_byte(curr_byte)
 
         if NextNode:
@@ -179,12 +182,12 @@ class Whatype(object):
         try:
             file_content = open(filepath).read()
             return self.find(file_content, self.Tree)
-        except Exception, e:
+        except Exception as e:
             raise WhatypeErr("file identification", str(e))
 
 
     def identify_buffer(self,file_content):
         try:
             return self.find(file_content, self.Tree,0,[])
-        except Exception, e:
+        except Exception as e:
             raise WhatypeErr("buffer identification", str(e))

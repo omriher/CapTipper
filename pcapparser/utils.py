@@ -1,4 +1,4 @@
-from __future__ import unicode_literals, print_function, division
+
 import zlib
 from pcapparser.constant import Compress
 
@@ -39,9 +39,9 @@ def try_print_json(text, output_file):
 
 
 def try_decoded_print(content, buf):
-    import urllib
+    import urllib.request, urllib.parse, urllib.error
 
-    content = urllib.unquote(content)
+    content = urllib.parse.unquote(content)
     buf.write(content)
 
 

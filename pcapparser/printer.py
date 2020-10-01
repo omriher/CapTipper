@@ -1,6 +1,6 @@
 # Changes made to integrate with CapTipper in lines: 31-47,57-60,88-94,108-112, 129-135, 148-150,188-189
 # coding=utf-8
-from __future__ import unicode_literals, print_function, division
+
 
 from io import StringIO
 import sys
@@ -64,7 +64,7 @@ class HttpPrinter(object):
                 req_body = ""
             else:
                 req_body = "\r\n\r\n" + req_body
-            self.req = req_header.raw_data + req_body
+            self.req = req_header.raw_data + req_body.encode("utf-8")
             self.host = req_header.host
             self.referer = req_header.referer
             self.method = req_header.method
@@ -101,7 +101,7 @@ class HttpPrinter(object):
             self.orig_chunked_resp = orig_chunked_resp
             self.res_type = resp_header.content_type
             self.res_len = resp_header.content_len
-            self.res_num = resp_header.status_line[resp_header.status_line.find(' ') + 1:]
+            self.res_num = resp_header.status_line[resp_header.status_line.find(b' ') + 1:]
             self.redirect_to = resp_header.redirect_to
             self.filename = resp_header.filename
 
@@ -119,7 +119,7 @@ class HttpPrinter(object):
                 self._print_body(resp_body, resp_header.compress, mime, charset)
                 #self._println()
                 self.orig_resp = resp_body
-                if self.res_body == b"":
+                if self.res_body == "":
                     self.res_body = resp_body
 
                 if (self.res_body is not None) and (len(self.res_body) > 0) and (self.res_len == 0):
@@ -202,7 +202,7 @@ class HttpPrinter(object):
                 else:
                     self.buf.write(content)
                 self.buf.write('\n')
-        except Exception,e:
+        except Exception as e:
             content = utils.decode_body(body, charset)
             self.buf.write(content)
             self.buf.write('\n')
