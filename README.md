@@ -1,4 +1,4 @@
-##CapTipper v0.3
+## CapTipper v0.3
 
 [Logo]: http://4.bp.blogspot.com/-uuRE1KkS5Jo/Vb8j-cfEuHI/AAAAAAAAeY4/MltsTu7jG5E/s1600/CapTipper_logo.png
 ![Logo]
@@ -20,11 +20,13 @@ In addition, an interactive shell is launched for deeper investigation using var
 
 Documentation: http://captipper.readthedocs.org
 
+**Update from 02-Oct-2020:** CapTipper also supports Python3 and can be found in the following branch: https://github.com/omriher/CapTipper/tree/python3_support
+
 [ScreenShot]: http://3.bp.blogspot.com/-7XrSKP1BHzE/VLRGBR3cQ0I/AAAAAAAAZso/3FpWTRi8rYU/s1600/CapTipperScreenShot.png
 
 ![ScreenShot]
 ***
-###Analysis Example
+### Analysis Example
 
 ```sh
 Usage: ./CapTipper.py <PCAP_file> [-p] [web_server_port=80]
@@ -398,7 +400,7 @@ We notice that most of the Anti-Viruses detected this file as malicious, while s
 * If you don't have a VirusTotal public API key, you can use the command 'hashes', and manually send the hash to VirusTotal.
 
 ***
-###Info
+### Info
 
 Written By Omri Herscovici
 
