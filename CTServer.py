@@ -117,7 +117,7 @@ class TCPHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
         try:
-            self.data = self.request.recv(1024).strip()
+            self.data = self.request.recv(4096).strip()
             request = HTTPRequest(self.data)
 
             if self.data != "":

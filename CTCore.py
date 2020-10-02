@@ -35,7 +35,7 @@ plugins = []
 plugins_folder = "plugins/"
 pcap_file = ""
 VERSION = "0.3"
-BUILD = "13"
+BUILD = "14"
 ABOUT = "CapTipper v" + VERSION + " b" + BUILD + " - Malicious HTTP traffic explorer tool" + newLine + \
         "Copyright 2015 Omri Herscovici <omriher@gmail.com>" + newLine
 
@@ -388,8 +388,8 @@ class srcHTMLParser(HTMLParser):
 
 def update_captipper():
     currentVersion = "v{} b{}".format(VERSION,BUILD)
-    rawURL = "https://raw.githubusercontent.com/omriher/CapTipper/master/"
-    archiveURL = "https://github.com/omriher/CapTipper/archive/"
+    rawURL = "https://raw.githubusercontent.com/kisec/CapTipper/master/"
+    archiveURL = "https://github.com/kisec/CapTipper/archive/"
     CoreFile = "CTCore.py"
     CTArchive = "master.zip"
 
@@ -406,10 +406,12 @@ def update_captipper():
     if repoVer:
         newVersion = "v{} b{}".format(repoVer[0][0],repoVer[0][1])
     else:
+        alert_message("Error getting repository version", msg_type.ERROR)
         sys.exit('[-] Error getting repository version')
 
     if newVersion == currentVersion:
-         sys.exit("[+] You have the newest version!")
+        alert_message("You have the newest version!", msg_type.INFO)
+        return
     else:
         print "[+] Updating CapTipper to {}".format(newVersion)
         bPackSize = False
@@ -498,9 +500,9 @@ def send_to_vt(md5, key_vt):
         return (-1, 'Error during VirusTotal response parsing')
     return (0, json_dict)
 
-def get_strings(content):
-    strings = re.findall("[\x1f-\x7e]{5,}", content)
-    strings += [str(ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){5,}", content)]
+def get_strings(content, minlen=5):
+    strings = re.findall("[\x1f-\x7e]{"+str(minlen)+",}", content)
+    strings += [str(ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){"+str(minlen)+",}", content)]
     return strings
 
 def get_request_size(id, size, full_request=False):

@@ -397,6 +397,53 @@ CT> vt 13
         AVG     Exploit_c.ABKR  15.0.0.4235     20141211
         Baidu-International     Trojan.Win32.CVE-2013-0074.bBZ  3.5.1.41473     20141211
 ```
+YARA Pattern Detection plugin(check\_yara)
+```sh
+CT> plugin -l
+Loaded Plugins (4):
+ 0 : find_scripts - Finds external scripts included in the object body
+ 1 : check_yara - Checks Yara Patterns : Usage>> plugin check_yara [all | conversation ID]
+ 2 : check_host - Checks if a given id's host is alive
+ 3 : print_body - Prints the body of a conversation and ungzip if needed
+
+```
+
+Sample YARA Pattern(./plugins/rules/redirection_302.yar)
+```
+rule rediction_302
+{
+        meta:
+               description = "302 Redirection detection rule"
+               author = "madwind@kisec.com"
+
+        strings:
+               $a = "<title>302 Found</title>"
+               $b = "<p>The document has moved"
+
+        condition:
+               all of them
+}
+```
+
+302 Redirection Detection
+
+```sh
+CT> plugin check_yara all
+[!] Check Yara Patterns in objects
+[+] Detection: [2] seedadmin17.html :[rediction_302]
+
+CT> body 2 200
+Displaying body of object 2 (seedadmin17.html) [200 bytes]:
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="http://grannityrektonaver.co.vu/15c0b14drr9f_1_
+
+```
+
 We notice that most of the Anti-Viruses detected this file as malicious, while some even provided the exploit CVE (2013-0074).  
 * If you don't have a VirusTotal public API key, you can use the command 'hashes', and manually send the hash to VirusTotal.
 

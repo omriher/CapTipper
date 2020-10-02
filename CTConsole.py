@@ -190,6 +190,10 @@ class console(cmd.Cmd, object):
                     ans = raw_input()
                     if ans.lower() == "y" or ans == "":
                         bOpen = True
+                        CTCore.web_server = server()
+                        CTCore.web_server.start()
+                        time.sleep(0.1) # Fixes graphic issues
+                        CTCore.web_server_turned_on = True
                 else:
                     bOpen = True
 
@@ -452,7 +456,8 @@ class console(cmd.Cmd, object):
                 s_cmd = l[0]
                 if s_cmd.lower() == "on":
                     if CTCore.web_server_turned_on:
-                        print "     Web Server already on: http://" + CTCore.HOST + ":" + CTCore.PORT
+                        print "     Web Server already on: http://" + CTCore.HOST + ":" +\
+                            str(CTCore.PORT)
                     else:
                         CTCore.web_server = server()
                         CTCore.web_server.start()
@@ -720,12 +725,15 @@ class console(cmd.Cmd, object):
             if (l[0] == ""):
                 self.help_strings()
             else:
+                string_minlen = 5
+                if len(l) == 2:
+                    string_minlen = int(l[1])
                 id, size = get_id_size(line)
                 response, size = CTCore.get_response_and_size(id, "all")
                 name = CTCore.get_name(id)
 
                 print "Strings found in object {} ({}) [{} bytes]:".format(id, name, size)
-                strings = CTCore.get_strings(response)
+                strings = CTCore.get_strings(response, string_minlen)
                 print (newLine.join(str for str in strings))
         except Exception,e:
             print str(e)
@@ -782,6 +790,7 @@ class console(cmd.Cmd, object):
         print "     plugin find_scripts"
         print "     plugin 1"
         print "     p find_scripts"
+        print "     p check_yara all"
 
 
     def do_output(self, line):
