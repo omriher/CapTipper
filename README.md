@@ -3,7 +3,7 @@
 [Logo]: http://4.bp.blogspot.com/-uuRE1KkS5Jo/Vb8j-cfEuHI/AAAAAAAAeY4/MltsTu7jG5E/s1600/CapTipper_logo.png
 ![Logo]
 
-! This Branch is adjusted to Python3 !
+**! This Branch is adjusted to Python3 !**
 
 CapTipper v0.3: http://www.omriher.com/2015/08/captipper-v03-is-out.html  
 CapTipper v0.2: http://www.omriher.com/2015/03/captipper-02-released.html  
@@ -26,7 +26,7 @@ Documentation: http://captipper.readthedocs.org
 
 ![ScreenShot]
 ***
-###Analysis Example
+### Analysis Example
 
 ```sh
 Usage: ./CapTipper.py <PCAP_file> [-p] [web_server_port=80]
@@ -400,7 +400,7 @@ We notice that most of the Anti-Viruses detected this file as malicious, while s
 * If you don't have a VirusTotal public API key, you can use the command 'hashes', and manually send the hash to VirusTotal.
 
 ***
-###Info
+### Info
 
 Written By Omri Herscovici
 
