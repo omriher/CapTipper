@@ -60,7 +60,7 @@ def main(args, pcap_file):
             CTCore.web_server.start()
             time.sleep(0.1) # Fixes graphic issues
             CTCore.web_server_turned_on = True
-        except Exception,e:
+        except Exception as e:
             CTCore.alert_message("Error starting Web Server:", CTCore.msg_type.ERROR)
 
             if str(e).find("Errno 1004") > 0 or str(e).find("Errno 98") > 0:

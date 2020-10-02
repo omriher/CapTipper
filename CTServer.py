@@ -142,11 +142,14 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                             break
 
                     if not using_host_header:
-                        if req_host == "127.0.0.1":
+                        if req_host.split(":")[0] == "127.0.0.1":
                             localhost = "http://127.0.0.1/"
                             try:
                                 # set req_host to be referer
-                                referrer = request.headers['referer']
+                                if request.headers.has_key('referer'):
+                                    referrer = request.headers['referer']
+                                else:
+                                    referrer = ""
                                 # if referer isn't 127.0.0.1
                                 if referrer.find(localhost) == 0:
                                     end_of_host = referrer.find("/",len(localhost) + 1)
@@ -155,7 +158,7 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                                 pass
 
                             # set req_host to be the last request
-                            if (len(CTCore.request_logs) > 0) and (request.path.find(req_host) == 1 or req_host == "127.0.0.1"):
+                            if (len(CTCore.request_logs) > 0) and (request.path.find(req_host) == 1 or req_host.split(":")[0] == "127.0.0.1"):
                                 last_req = CTCore.request_logs[-1]
                                 last_url = last_req[last_req.find(' : ') + 3:]
                                 last_req_parsed = urlparse("http://" + last_url)
@@ -195,7 +198,9 @@ class TCPHandler(SocketServer.BaseRequestHandler):
 
                     if not req_sent:
                         if get_uri == "/":
-                            self.request.send(self.build_index())
+                            dir_response = b"HTTP/1.1 200 OK\r\n\r\n" + self.build_index()
+                            self.request.send(dir_response)
+                            res = "200 OK [Main Dir]"
                         else:
                             self.request.send("HTTP/1.1 404 Not Found")
                             res = "404 Not Found"
@@ -204,5 +209,5 @@ class TCPHandler(SocketServer.BaseRequestHandler):
                 finally:
                     self.log(req_host + get_uri + " - " + res)
         except Exception, e:
-            pass
+            print e
             
