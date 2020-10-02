@@ -19,6 +19,10 @@ class check_host(ConsolePlugin):
                 host = self.conversations[id].host
                 ip, port = self.conversations[id].server_ip_port.split(":")
 
+                # Decode Bytearray to string
+                if not isinstance(host, str):
+                    host = host.decode("cp437", "ignore")
+
                 # Logging
                 print("Checking host {}".format(host))
                 print("IP:PORT = {}:{}".format(ip,port))

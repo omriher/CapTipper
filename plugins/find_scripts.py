@@ -17,6 +17,10 @@ class find_scripts(ConsolePlugin):
                 # Get response body as text even in case it was Gzipped
                 response_body = self.get_plaintext_body_by_id(id)
 
+                # Decode Bytearray to string
+                if not isinstance(response_body, str):
+                    response_body = response_body.decode("cp437", "ignore")
+
                 # Create Parser instance and search for <script src="...
                 parser = srcHTMLParser("script")
                 parser.feed(response_body)
