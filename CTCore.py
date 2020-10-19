@@ -686,8 +686,8 @@ def dump_file(id, path):
     body, sz = get_response_and_size(id, "all")
 
     show_errors()
-    if not os.path.isdir(path):
-        os.makedirs(path)
+    if not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
 
     f = open(path, "wb")
     f.write(body)
