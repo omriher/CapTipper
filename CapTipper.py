@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #
 #          CapTipper is a malicious HTTP traffic explorer tool
